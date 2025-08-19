@@ -5,7 +5,8 @@ import { getFlag } from 'flags/next';
  */
 export const NEW_FEATURE_FLAG = 'new-feature';
 
-/**
+
+/*
  * Fetches the flag value using the Flags SDK.
  *
  * @returns A boolean indicating whether the new feature is enabled.
