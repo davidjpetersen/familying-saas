@@ -5,9 +5,12 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/components/ThemeProvider";
+import { dark, shadcn } from "@clerk/themes";
 import { Moon } from "lucide-react";
 
 const Navbar = () => {
+  const { theme } = useTheme();
   return (
     <header className="flex justify-between items-center p-4 gap-4 h-16 max-w-7xl mx-auto">
       <Link href="/" className="text-2xl font-bold">
@@ -24,14 +27,20 @@ const Navbar = () => {
           </SignInButton>
         </SignedOut>
         <SignedIn>
-          <UserButton
+      <UserButton
             appearance={{
               elements: {
                 userButtonPopoverCard: "min-w-[260px]",
               },
+              baseTheme: theme === "dark" ? dark : shadcn,
             }}
             userProfileMode="modal"
           >
+            <UserButton.UserProfileLink
+              label="Appearance"
+              url="appearance"
+              labelIcon={<Moon className="h-4 w-4" />}
+            />
             <UserButton.UserProfilePage
               label="Appearance"
               url="appearance"
