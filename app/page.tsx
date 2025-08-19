@@ -1,4 +1,8 @@
-export default function Home() {
+import { isNewFeatureEnabled } from "@/lib/flags";
+
+export default async function Home() {
+  const newFeature = await isNewFeatureEnabled();
+
   return (
     <main>
       <section className="flex flex-col gap-4">
@@ -26,6 +30,11 @@ export default function Home() {
         <p>
           You can find all the prerequisites and env variables in the Readme.md
         </p>
+        {newFeature && (
+          <p className="rounded-md bg-green-100 p-2 text-green-800">
+            The new feature flag is enabled!
+          </p>
+        )}
       </section>
     </main>
   );
