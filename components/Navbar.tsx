@@ -17,9 +17,7 @@ const Navbar = () => {
         Familying
       </Link>
       <div className="flex gap-4 items-center">
-        <Link href="/recipes">Browse Recipes</Link>
-        <Link href="/subscription">Subscriptions</Link>
-        <Link href="/my-cookbook">My Cookbook</Link>
+  <Link href="/subscription">Subscriptions</Link>
 
         <SignedOut>
           <SignInButton>
@@ -36,11 +34,7 @@ const Navbar = () => {
             }}
             userProfileMode="modal"
           >
-            <UserButton.UserProfileLink
-              label="Appearance"
-              url="appearance"
-              labelIcon={<Moon className="h-4 w-4" />}
-            />
+           
             <UserButton.UserProfilePage
               label="Appearance"
               url="appearance"

@@ -1,5 +1,8 @@
 -- Initial schema and RLS policies for Sprint 1
 
+-- Enable pgcrypto for gen_random_uuid()
+create extension if not exists "pgcrypto";
+
 -- Users
 create table public.users (
     id uuid primary key default gen_random_uuid(),
