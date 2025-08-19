@@ -5,7 +5,6 @@ import { getFlag } from 'flags/next';
  */
 export const NEW_FEATURE_FLAG = 'new-feature';
 
-
 /*
  * Fetches the flag value using the Flags SDK.
  *
