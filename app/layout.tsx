@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -17,6 +18,17 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
+        <Script id="theme-init" strategy="beforeInteractive">{`
+          (function(){
+            try {
+              var stored = localStorage.getItem('theme');
+              var preferDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+              var isDark = stored === 'dark' || (!stored || stored === 'system') && preferDark;
+              var root = document.documentElement;
+              if (isDark) root.classList.add('dark'); else root.classList.remove('dark');
+            } catch(_) {}
+          })();
+        `}</Script>
         <body className="antialiased font-sans">
           <ThemeProvider>
             <div className="container mx-auto">
