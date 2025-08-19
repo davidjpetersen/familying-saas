@@ -19,7 +19,7 @@ const Navbar = () => {
           </SignInButton>
         </SignedOut>
         <SignedIn>
-          <UserButton />
+          <UserButton userProfileUrl="/account" />
         </SignedIn>
       </div>
     </header>
