@@ -33,9 +33,9 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.4",
     "sonner": "^2.0.7",
+    "svix": "^1.44.0",
     "tailwind-merge": "^3.3.0",
-  "zod": "^3.25.32",
-  "svix": "^1.44.0"
+    "zod": "^3.25.32"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -45,6 +45,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.0",
     "typescript": "^5"
