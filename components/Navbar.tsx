@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import { dark, shadcn } from "@clerk/themes";
-import { Moon } from "lucide-react";
+import { Group, Moon } from "lucide-react";
+
+import ProfileSwitcher from "@/components/ProfileSwitcher";
 
 const Navbar = () => {
   const { theme } = useTheme();
@@ -23,6 +25,7 @@ const Navbar = () => {
           </SignInButton>
         </SignedOut>
         <SignedIn>
+            <ProfileSwitcher />
       <UserButton
             appearance={{
               elements: {
@@ -32,7 +35,11 @@ const Navbar = () => {
             }}
             userProfileMode="modal"
           >
-           
+            <UserButton.UserProfilePage
+              label="Family Members"
+              url="family"
+              labelIcon={<Group className="h-4 w-4" />}
+            ></UserButton.UserProfilePage>
             <UserButton.UserProfilePage
               label="Appearance"
               url="appearance"

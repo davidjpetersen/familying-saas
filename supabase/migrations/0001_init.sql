@@ -83,39 +83,82 @@ create policy "Users can update own" on public.users
     with check (clerk_user_id = auth.jwt() ->> 'sub');
 
 -- Families: owner-only access for now
+-- Families: owner-only access for now
+-- Map Clerk JWT subject (sub) to local users.id via users.clerk_user_id so owners (by Clerk) are recognized
 create policy "Family owners access" on public.families
-    for all using (owner_user_id = auth.uid())
-    with check (owner_user_id = auth.uid());
+    for all using (
+        owner_user_id = (
+            select id from public.users u where u.clerk_user_id = auth.jwt() ->> 'sub'
+        )
+    )
+    with check (
+        owner_user_id = (
+            select id from public.users u where u.clerk_user_id = auth.jwt() ->> 'sub'
+        )
+    );
 
 -- Family members: owner-only via family
+-- Family members: owner-only via family
+-- Allow family owners (as identified by their Clerk subject) to manage members
 create policy "Family owners manage members" on public.family_members
     for all using (
         exists (
             select 1 from public.families f
-            where f.id = family_id and f.owner_user_id = auth.uid()
+            where f.id = family_id and f.owner_user_id = (
+                select id from public.users u where u.clerk_user_id = auth.jwt() ->> 'sub'
+            )
         )
     )
     with check (
         exists (
             select 1 from public.families f
-            where f.id = family_id and f.owner_user_id = auth.uid()
+            where f.id = family_id and f.owner_user_id = (
+                select id from public.users u where u.clerk_user_id = auth.jwt() ->> 'sub'
+            )
         )
     );
 
 -- Subscriptions restricted to owner
+-- Subscriptions restricted to owner
 create policy "Users manage own subscriptions" on public.subscriptions
-    for all using (user_id = auth.uid())
-    with check (user_id = auth.uid());
+    for all using (
+        user_id = (
+            select id from public.users u where u.clerk_user_id = auth.jwt() ->> 'sub'
+        )
+    )
+    with check (
+        user_id = (
+            select id from public.users u where u.clerk_user_id = auth.jwt() ->> 'sub'
+        )
+    );
 
 -- Microservice access restricted to owner
+-- Microservice access restricted to owner
 create policy "Users manage own microservice access" on public.microservice_access
-    for all using (user_id = auth.uid())
-    with check (user_id = auth.uid());
+    for all using (
+        user_id = (
+            select id from public.users u where u.clerk_user_id = auth.jwt() ->> 'sub'
+        )
+    )
+    with check (
+        user_id = (
+            select id from public.users u where u.clerk_user_id = auth.jwt() ->> 'sub'
+        )
+    );
 
 -- Quiz responses restricted to owner
+-- Quiz responses restricted to owner
 create policy "Users manage own quiz responses" on public.quiz_responses
-    for all using (user_id = auth.uid())
-    with check (user_id = auth.uid());
+    for all using (
+        user_id = (
+            select id from public.users u where u.clerk_user_id = auth.jwt() ->> 'sub'
+        )
+    )
+    with check (
+        user_id = (
+            select id from public.users u where u.clerk_user_id = auth.jwt() ->> 'sub'
+        )
+    );
 
 -- Seed features
 insert into public.features (key, label, tier, enabled) values

@@ -4,7 +4,6 @@ import React from "react";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import Hero from "@/components/dashboard/Hero";
 import RowCarousel from "@/components/dashboard/RowCarousel";
-import ProfileSwitcher from "@/components/ProfileSwitcher";
 
 const mockRows = [
   {
@@ -46,15 +45,6 @@ export default function DashboardPage() {
   return (
     <main className="py-8">
       <SignedIn>
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-extrabold">Welcome back</h1>
-            <p className="text-sm text-muted-foreground">Personalized for your family</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <ProfileSwitcher />
-          </div>
-        </div>
 
         <section className="mb-8">
           <Hero
