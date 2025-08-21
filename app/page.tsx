@@ -1,7 +1,15 @@
 import { isNewFeatureEnabled } from "@/lib/flags";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const newFeature = await isNewFeatureEnabled();
+
+  // If the user is authenticated, send them straight to the personalized dashboard.
+  const { userId } = await auth();
+  if (userId) {
+    redirect("/dashboard");
+  }
 
   return (
     <main>
