@@ -16,9 +16,7 @@ const Navbar = () => {
       <Link href="/" className="text-2xl font-bold">
         Familying
       </Link>
-      <div className="flex gap-4 items-center">
-  <Link href="/subscription">Subscriptions</Link>
-
+  <div className="flex gap-4 items-center">
         <SignedOut>
           <SignInButton>
             <Button>Sign In</Button>

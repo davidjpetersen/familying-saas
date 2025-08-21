@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { ClerkProvider } from "@clerk/nextjs";
+import ClerkProviderWrapper from "@/components/ClerkProviderWrapper";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
@@ -31,14 +31,14 @@ export default function RootLayout({
           `}</Script>
         </head>
         <body className="antialiased font-sans">
-          <ClerkProvider>
-            <ThemeProvider>
+          <ThemeProvider>
+            <ClerkProviderWrapper>
               <div className="container mx-auto">
                 <Navbar />
                 {children}
               </div>
-            </ThemeProvider>
-          </ClerkProvider>
+            </ClerkProviderWrapper>
+          </ThemeProvider>
         </body>
       </html>
   );
