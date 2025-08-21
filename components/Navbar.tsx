@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import { dark, shadcn } from "@clerk/themes";
-import { Group, Moon } from "lucide-react";
+import { Users, Moon } from "lucide-react";
 
 import ProfileSwitcher from "@/components/ProfileSwitcher";
+import FamilyMembersManager from "@/components/FamilyMembersManager";
 
 const Navbar = () => {
   const { theme } = useTheme();
@@ -38,8 +39,10 @@ const Navbar = () => {
             <UserButton.UserProfilePage
               label="Family Members"
               url="family"
-              labelIcon={<Group className="h-4 w-4" />}
-            ></UserButton.UserProfilePage>
+              labelIcon={<Users className="h-4 w-4" />}
+            >
+              <FamilyMembersManager />
+            </UserButton.UserProfilePage>
             <UserButton.UserProfilePage
               label="Appearance"
               url="appearance"
