@@ -1,6 +1,6 @@
 "use client";
 
-import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs";
+import { SignedOut, SignInButton, SignedIn, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import React from "react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,18 @@ import { Users, Moon } from "lucide-react";
 import ProfileSwitcher from "@/components/ProfileSwitcher";
 import FamilyMembersManager from "@/components/FamilyMembersManager";
 import FeaturesNavMenu from "@/components/FeaturesNavMenu";
+
+function AdminLink() {
+  const { user } = useUser();
+  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  if (!user || !adminEmail) return null;
+  const email = user.primaryEmailAddress?.emailAddress ?? user.emailAddresses?.[0]?.emailAddress ?? null;
+  if (!email) return null;
+  if (email !== adminEmail) return null;
+  return (
+    <Link href="/admin" className="text-sm px-2 py-1 rounded hover:bg-accent">Admin</Link>
+  );
+}
 
 const Navbar = () => {
   const { theme } = useTheme();
@@ -26,10 +38,11 @@ const Navbar = () => {
             <Button>Sign In</Button>
           </SignInButton>
         </SignedOut>
-        <SignedIn>
+    <SignedIn>
 
-            <FeaturesNavMenu />
-      <UserButton
+      <FeaturesNavMenu />
+      <AdminLink />
+    <UserButton
             appearance={{
               elements: {
                 userButtonPopoverCard: "min-w-[260px]",
