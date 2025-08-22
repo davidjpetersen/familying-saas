@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { List } from "lucide-react";
+import { List, Check, Lock } from "lucide-react";
 
 // Consumes server endpoint that returns { plan, features }
 export default function FeaturesNavMenu() {
@@ -52,10 +52,6 @@ export default function FeaturesNavMenu() {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-0">
-        <div className="p-4">
-          <div className="text-xs font-medium">Available features</div>
-        </div>
-        <DropdownMenuSeparator />
         {loading ? (
           <div className="p-2 text-sm text-muted-foreground">Loading plans…</div>
         ) : (
@@ -70,24 +66,18 @@ export default function FeaturesNavMenu() {
             // Two-column grid layout for features (matches the NavigationMenu example)
             return (
               <div className="p-4">
-                <div className="px-2 py-1">
-                  <div className="text-sm font-medium">{premium.name}</div>
-                  <div className="text-xs text-muted-foreground">{premium.slug}</div>
-                </div>
-                <DropdownMenuSeparator />
+
                 <div className="px-2 py-3">
                   {planFeatures.length === 0 ? (
                     <div className="text-sm text-muted-foreground">No features</div>
                   ) : (
-                    <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                    <ul className="grid w-[250px] gap-2">
                       {planFeatures.map((f: any) => {
                         const slug = f.slug ?? f.id;
                         const enabled = enabledSet.has(slug);
                         return (
                           <li key={f.id}>
-                            <ListItem href={`/features/${slug}`} title={f.name} subtle={!enabled}>
-                              {f.description ?? f.summary ?? ''}
-                            </ListItem>
+                            <ListItem href={`/services/${slug}`} title={f.name} enabled={enabled} subtle={!enabled}></ListItem>
                           </li>
                         );
                       })}
@@ -96,7 +86,7 @@ export default function FeaturesNavMenu() {
 
                   <div className="pt-3">
                     {!allEnabled && (
-                      <Link href="/subscription" className="block w-full text-center rounded bg-primary px-3 py-1 text-white">
+                      <Link href="/subscription" className="block w-full text-center rounded bg-primary px-3 py-3 text-white">
                         Upgrade to unlock all features
                       </Link>
                     )}
@@ -111,12 +101,19 @@ export default function FeaturesNavMenu() {
   );
 }
 
-function ListItem({ href, title, children, subtle }: { href: string; title: string; children?: React.ReactNode; subtle?: boolean }) {
+function ListItem({ href, title, children, subtle, enabled }: { href: string; title: string; children?: React.ReactNode; subtle?: boolean; enabled?: boolean }) {
   return (
     <Link href={href} className="block w-full">
       <div className={`rounded-md p-3 hover:bg-accent/50 ${subtle ? 'opacity-70' : ''}`}>
-        <div className="text-sm font-medium">{title}</div>
-        {children ? <div className="text-xs text-muted-foreground mt-1 leading-tight">{children}</div> : null}
+        <div className="flex items-center gap-2">
+          <div className="flex-none">
+            {enabled ? <Check className="size-4 text-green-500" /> : <Lock className="size-4 text-muted-foreground" />}
+          </div>
+          <div className="flex-1">
+            <div className="text-sm font-medium">{title}</div>
+            {children ? <div className="text-xs text-muted-foreground mt-1 leading-tight">{children}</div> : null}
+          </div>
+        </div>
       </div>
     </Link>
   );
