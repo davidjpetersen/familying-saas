@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { createSupabaseClient } from '@/lib/supabase';
-import BookSummariesManager from '../../../components/BookSummariesManager'
+import AdminBookSummariesView from '../../../components/AdminBookSummariesView'
 
 export default async function Page() {
   const { userId } = await auth();
@@ -21,7 +21,7 @@ export default async function Page() {
       </div>
 
       <div className="mt-6">
-        <BookSummariesManager />
+        <AdminBookSummariesView />
       </div>
     </div>
   );

@@ -11,10 +11,18 @@ export default function SummaryTable() {
   const [total, setTotal] = useState(0);
   const [selected, setSelected] = useState<Record<string, boolean>>({});
 
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
   useEffect(() => {
     let mounted = true;
     async function load() {
-      const res = await fetch(`/api/admin/book-summaries?page=${page}`);
+      const qp = new URLSearchParams();
+      qp.set('page', String(page));
+      qp.set('pageSize', String(25));
+      if (search) qp.set('search', search);
+      if (statusFilter) qp.set('status', statusFilter);
+      const res = await fetch(`/api/admin/book-summaries?${qp.toString()}`);
       if (!res.ok) return;
       const { data, count } = await res.json();
       if (mounted) {
@@ -24,9 +32,21 @@ export default function SummaryTable() {
     }
     load();
     return () => { mounted = false };
-  }, [page]);
+  }, [page, search, statusFilter]);
 
   const toggle = (id: string) => setSelected((s) => ({ ...s, [id]: !s[id] }));
+
+  function relativeTime(d: Date) {
+    const diff = Date.now() - d.getTime();
+    const sec = Math.floor(diff / 1000);
+    if (sec < 60) return `${sec}s`;
+    const min = Math.floor(sec / 60);
+    if (min < 60) return `${min}m`;
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return `${hr}h`;
+    const days = Math.floor(hr / 24);
+    return `${days}d`;
+  }
 
   const bulkDelete = async () => {
     const ids = Object.keys(selected).filter((k) => selected[k]);
@@ -46,8 +66,8 @@ export default function SummaryTable() {
     <div>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2">
-          <input placeholder="Search" className="border px-2 py-1 rounded" />
-          <select className="border px-2 py-1 rounded">
+          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Search owner or title" className="border px-2 py-1 rounded" />
+          <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="border px-2 py-1 rounded">
             <option value="">All status</option>
             <option value="draft">draft</option>
             <option value="review">review</option>
@@ -80,8 +100,8 @@ export default function SummaryTable() {
               <td>{r.status}</td>
               <td>{r.schema_version}</td>
               <td>{r.owner}</td>
-              <td>{(r.tags || []).map((t: string) => <span key={t} className="px-2 py-1 mr-1 bg-gray-100 rounded text-sm">{t}</span>)}</td>
-              <td>{new Date(r.updated_at).toLocaleString()}</td>
+              <td>{(r.tags || []).map((t: string) => <span key={t} className="px-2 py-1 mr-1 bg-gray-100 rounded text-sm lowercase">{t}</span>)}</td>
+              <td>{r.updated_at ? relativeTime(new Date(r.updated_at)) : '—'}</td>
               <td><Link href={`/admin/book-summaries/${r.id}`} className="text-blue-500">Edit</Link></td>
             </tr>
           ))}

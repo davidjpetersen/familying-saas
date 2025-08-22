@@ -3,15 +3,13 @@ import { getBookSummary } from '../../../../lib/supabase/bookSummaries'
 import SummaryForm from '../../../../components/SummaryForm'
 import ActivitySidebar from '../../../../components/ActivitySidebar'
 
-type Props = { params: { id: string } }
-
-export default async function Page({ params }: Props) {
+export default async function Page({ params }: any) {
   const data = await getBookSummary(params.id);
   return (
     <main className="p-6 flex gap-6">
       <div className="flex-1">
         <h1 className="text-2xl font-semibold mb-4">Edit Summary</h1>
-        <SummaryForm initial={data} id={params.id} onSaved={(r) => { /* navigate or toast */ }} />
+  <SummaryForm initial={data} id={params.id} />
       </div>
       <ActivitySidebar summaryId={params.id} />
     </main>

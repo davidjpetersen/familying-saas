@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(url || '', key || '');
-
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, context: any) {
   try {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return NextResponse.json({ error: 'Supabase service key missing' }, { status: 500 });
+  const supabase = createClient(url, key);
+    const params = context?.params || {};
     const id = params.id === '_all' ? undefined : params.id;
     let q = supabase.from('book_summaries_audit').select('*').order('created_at', { ascending: false }).limit(10);
     if (id) q = q.eq('summary_id', id);
