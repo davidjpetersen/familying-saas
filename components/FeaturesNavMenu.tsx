@@ -2,14 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { List, Check, Lock } from "lucide-react";
+import { Check, Lock } from "lucide-react";
 
 // Consumes server endpoint that returns { plan, features }
 export default function FeaturesNavMenu() {
@@ -43,61 +36,36 @@ export default function FeaturesNavMenu() {
     return key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   }
 
+  // Render horizontal link menu
+  const premium = plans?.find((p: any) => p.slug === 'familying_premium' || p.name?.toLowerCase().includes('premium'));
+  const planFeatures: any[] = Array.isArray(premium?.features) ? premium.features : [];
+  const enabledSet = new Set(userFeatures || []);
+  const allEnabled = planFeatures.length > 0 && planFeatures.every((f) => enabledSet.has(f.slug || f.id || ''));
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="inline-flex items-center gap-2 rounded px-2 py-1 hover:bg-accent">
-          <List className="h-4 w-4" />
-          <span className="text-sm">Services</span>
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="p-0">
-        {loading ? (
-          <div className="p-2 text-sm text-muted-foreground">Loading plans…</div>
-        ) : (
-          (() => {
-            const premium = plans?.find((p: any) => p.slug === 'familying_premium' || p.name?.toLowerCase().includes('premium'));
-            if (!premium) return <div className="p-2 text-sm text-muted-foreground">No plans available</div>;
-
-            const planFeatures: any[] = Array.isArray(premium.features) ? premium.features : [];
-            const enabledSet = new Set(userFeatures || []);
-            const allEnabled = planFeatures.length > 0 && planFeatures.every((f) => enabledSet.has(f.slug || f.id || ''));
-
-            // Two-column grid layout for features (matches the NavigationMenu example)
+    <nav className="flex items-center gap-3 px-2 py-1">
+      {loading ? (
+        <div className="text-sm text-muted-foreground">Loading plans…</div>
+      ) : !premium ? (
+        <div className="text-sm text-muted-foreground">No plans available</div>
+      ) : (
+        <div className="flex items-center gap-2 overflow-x-auto">
+          {planFeatures.map((f: any) => {
+            const slug = f.slug ?? f.id;
+            const enabled = enabledSet.has(slug);
             return (
-              <div className="p-4">
-
-                <div className="px-2 py-3">
-                  {planFeatures.length === 0 ? (
-                    <div className="text-sm text-muted-foreground">No features</div>
-                  ) : (
-                    <ul className="grid w-[250px] gap-2">
-                      {planFeatures.map((f: any) => {
-                        const slug = f.slug ?? f.id;
-                        const enabled = enabledSet.has(slug);
-                        return (
-                          <li key={f.id}>
-                            <ListItem href={`/services/${slug}`} title={f.name} enabled={enabled} subtle={!enabled}></ListItem>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
-
-                  <div className="pt-3">
-                    {!allEnabled && (
-                      <Link href="/subscription" className="block w-full text-center rounded bg-primary px-3 py-3 text-white">
-                        Upgrade to unlock all features
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <Link key={slug} href={`/services/${slug}`} className={`text-sm px-3 py-1 rounded hover:bg-accent ${!enabled ? 'opacity-70' : ''}`}>
+                {f.name}
+              </Link>
             );
-          })()
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          })}
+        </div>
+      )}
+
+      {!loading && !allEnabled && (
+        <Link href="/subscription" className="ml-4 px-3 py-1 bg-primary text-white rounded text-sm">Upgrade</Link>
+      )}
+    </nav>
   );
 }
 

@@ -16,27 +16,61 @@ function generateId() {
 export type BookSummaryRow = {
   id: string;
   document: any;
-  schema_version: string | null;
   status: string | null;
   book: any;
   metadata: any;
   tags: string[] | null;
   owner: string | null;
+  owner_user_id?: string | null;
+  slug?: string | null;
+  isbn_10?: string | null;
+  isbn_13?: string | null;
+  canonical_url?: string | null;
+  publisher?: string | null;
+  publication_date?: string | null;
+  edition?: string | null;
+  language_code?: string | null;
+  page_count?: number | null;
+  series_name?: string | null;
+  series_number?: number | null;
+  toc?: any;
+  notable_quotes?: any;
+  source_citations?: any;
+  content_warnings?: string[] | null;
+  audience?: string | null;
+  difficulty?: string | null;
+  reading_time_minutes?: number | null;
+  audio_duration_minutes?: number | null;
+  cover_image_path?: string | null;
+  pdf_path?: string | null;
+  audio_path?: string | null;
+  version?: number | null;
+  qa_flags?: any;
+  moderation_notes?: string | null;
+  view_count?: number | null;
+  favorite_count?: number | null;
+  rating_count?: number | null;
+  rating_avg?: number | null;
+  visibility?: string | null;
+  locale?: string | null;
   created_at: string | null;
   updated_at: string | null;
 };
 
 export async function listBookSummaries({ page = 1, pageSize = 25, filters = {}, search }: { page?: number; pageSize?: number; filters?: Record<string, any>; search?: string }) {
   const supabase = getServiceSupabaseClient();
-    let query = supabase.from("book_summaries").select("id,document,schema_version,status,book,metadata,tags,owner,created_at,updated_at", { count: "exact" });
+    let query = supabase.from("book_summaries").select(
+  `id,document,status,book,metadata,tags,owner,owner_user_id,slug,isbn_10,isbn_13,canonical_url,publisher,publication_date,edition,language_code,page_count,series_name,series_number,toc,notable_quotes,source_citations,content_warnings,audience,difficulty,reading_time_minutes,audio_duration_minutes,cover_image_path,pdf_path,audio_path,version,qa_flags,moderation_notes,view_count,favorite_count,rating_count,rating_avg,visibility,locale,created_at,updated_at`,
+      { count: "exact" }
+    );
 
   // Filters
   if (filters.status) query = query.eq("status", filters.status);
-  if (filters.schema_version) query = query.eq("schema_version", filters.schema_version);
+  // schema_version removed from UI and queries
 
-  // Search owner or document->>title
+  // Search owner or title in document/book
   if (search) {
-    query = query.or(`owner.ilike.%${search}%,document->>title.ilike.%${search}%`);
+    query = query.or(`owner.ilike.%${search}%,document->>title.ilike.%${search}%,book->>title.ilike.%${search}%`);
   }
 
   const from = (page - 1) * pageSize;
@@ -48,7 +82,9 @@ export async function listBookSummaries({ page = 1, pageSize = 25, filters = {},
 
 export async function getBookSummary(id: string) {
   const supabase = getServiceSupabaseClient();
-    const { data, error } = await supabase.from("book_summaries").select("id,document,schema_version,status,book,metadata,tags,owner,created_at,updated_at").eq("id", id).single();
+    const { data, error } = await supabase.from("book_summaries").select(
+  `id,document,status,book,metadata,tags,owner,owner_user_id,slug,isbn_10,isbn_13,canonical_url,publisher,publication_date,edition,language_code,page_count,series_name,series_number,toc,notable_quotes,source_citations,content_warnings,audience,difficulty,reading_time_minutes,audio_duration_minutes,cover_image_path,pdf_path,audio_path,version,qa_flags,moderation_notes,view_count,favorite_count,rating_count,rating_avg,visibility,locale,created_at,updated_at`
+    ).eq("id", id).single();
   if (error) throw error;
   return data as BookSummaryRow;
 }
@@ -61,7 +97,6 @@ export async function createBookSummary(payload: Partial<BookSummaryRow>, userId
   // Basic schema validation via zod
   try {
     zSummary.parse({
-      schema_version: payload.schema_version ?? undefined,
       status: payload.status ?? undefined,
       owner: payload.owner ?? undefined,
       tags: payload.tags ?? [],
@@ -73,15 +108,18 @@ export async function createBookSummary(payload: Partial<BookSummaryRow>, userId
     throw new Error(`validation: ${e?.message ?? String(e)}`);
   }
 
-  const insert = {
+  // Build insert object: include provided payload fields so new bibliographic fields persist.
+  const insert: any = {
     id,
+    // ensure core defaults
     document: payload.document ?? {},
-    schema_version: payload.schema_version ?? null,
     status: payload.status ?? 'draft',
     book: payload.book ?? null,
     metadata: payload.metadata ?? null,
     tags: Array.isArray(payload.tags) ? payload.tags : [],
-    owner: payload.owner ?? null
+    owner: payload.owner ?? null,
+    // spread any other provided top-level fields (isbn, publisher, slug, etc.)
+    ...payload
   };
 
   const { data, error } = await supabase.from("book_summaries").insert(insert).select().single();
@@ -101,7 +139,6 @@ export async function updateBookSummary(id: string, payload: Partial<BookSummary
   // Validate minimally
   try {
     zSummary.parse({
-      schema_version: payload.schema_version ?? undefined,
       status: payload.status ?? undefined,
       owner: payload.owner ?? undefined,
       tags: payload.tags ?? [],

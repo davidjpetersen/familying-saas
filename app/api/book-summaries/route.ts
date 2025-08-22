@@ -6,7 +6,7 @@ function generateId() {
 
 export async function GET(req: Request) {
   const supabase = createSupabaseClient();
-  const { data, error } = await supabase.from('book_summaries').select('id, document, schema_version, status, tags, owner, created_at').order('created_at', { ascending: false }).limit(50);
+  const { data, error } = await supabase.from('book_summaries').select('id, document, status, tags, owner, created_at').order('created_at', { ascending: false }).limit(50);
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -15,8 +15,8 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const body = await req.json();
-  // basic validation: require id, schema_version, status, book, metadata, insights, recommendations
-  const required = ['id','schema_version','status','book','metadata','insights','recommendations'];
+  // basic validation: require id, status, book, metadata, insights, recommendations
+  const required = ['id','status','book','metadata','insights','recommendations'];
   for (const r of required) {
     if (!(r in body)) {
       return NextResponse.json({ error: `missing ${r}` }, { status: 400 });
@@ -28,7 +28,6 @@ export async function POST(req: Request) {
   const insert = {
     id,
     document: body,
-    schema_version: body.schema_version,
     status: body.status,
     book: body.book || null,
     metadata: body.metadata || null,

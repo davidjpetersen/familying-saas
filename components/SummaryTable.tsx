@@ -66,11 +66,11 @@ export default function SummaryTable() {
     <div>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2">
-          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Search owner or title" className="border px-2 py-1 rounded" />
+          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Search title or owner" className="border px-2 py-1 rounded" />
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="border px-2 py-1 rounded">
             <option value="">All status</option>
             <option value="draft">draft</option>
-            <option value="review">review</option>
+            <option value="in_review">in_review</option>
             <option value="published">published</option>
             <option value="archived">archived</option>
           </select>
@@ -85,9 +85,8 @@ export default function SummaryTable() {
         <thead>
           <tr>
             <th></th>
+            <th>Title</th>
             <th>Status</th>
-            <th>Schema</th>
-            <th>Owner</th>
             <th>Tags</th>
             <th>Updated</th>
             <th></th>
@@ -97,9 +96,8 @@ export default function SummaryTable() {
           {rows.map((r) => (
             <tr key={r.id} className="border-t">
               <td><input type="checkbox" checked={!!selected[r.id]} onChange={() => toggle(r.id)} /></td>
+              <td>{r.book?.title ?? r.document?.title ?? r.id}</td>
               <td>{r.status}</td>
-              <td>{r.schema_version}</td>
-              <td>{r.owner}</td>
               <td>{(r.tags || []).map((t: string) => <span key={t} className="px-2 py-1 mr-1 bg-gray-100 rounded text-sm lowercase">{t}</span>)}</td>
               <td>{r.updated_at ? relativeTime(new Date(r.updated_at)) : '—'}</td>
               <td><Link href={`/admin/book-summaries/${r.id}`} className="text-blue-500">Edit</Link></td>

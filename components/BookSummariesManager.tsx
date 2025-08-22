@@ -42,7 +42,6 @@ export default function BookSummariesManager() {
 
     const payload = {
       id: generateId(),
-      schema_version: doc.schema_version ?? 1,
       status,
       book: doc.book ?? null,
       metadata: doc.metadata ?? null,

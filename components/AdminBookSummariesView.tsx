@@ -79,7 +79,7 @@ export default function AdminBookSummariesView() {
                 </div>
                 <div className="p-3">
                   <div className="font-medium text-sm">{it.book?.title ?? it.document?.title ?? it.id}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{it.status ?? '—'} · {it.schema_version ?? '—'} · {relativeTime(it.updated_at)}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{it.status ?? '—'} · {relativeTime(it.updated_at)}</div>
                   <div className="mt-2 text-xs text-muted-foreground">{String(it.document?.summary ?? '').slice(0, 140)}</div>
                   <div className="mt-2 flex gap-2 flex-wrap">
                     {(it.tags || []).slice(0,5).map((t: string) => <span key={t} className="px-2 py-1 bg-gray-100 rounded text-xs lowercase">{t}</span>)}

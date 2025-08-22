@@ -1,7 +1,6 @@
 export interface BookSummary {
   id: string;
-  schema_version: string;
-  status: 'draft' | 'final';
+  status: 'draft' | 'in_review' | 'review' | 'published' | 'archived' | 'final';
   book: any;
   metadata: any;
   summary_glance?: {

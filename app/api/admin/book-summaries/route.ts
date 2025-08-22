@@ -16,10 +16,9 @@ export async function GET(req: Request) {
   const search = url.searchParams.get('search') || undefined;
   const filters: any = {};
   if (url.searchParams.get('status')) filters.status = url.searchParams.get('status');
-  if (url.searchParams.get('schema_version')) filters.schema_version = url.searchParams.get('schema_version');
 
   try {
-    const { data, count } = await listBookSummaries({ page, pageSize, filters, search });
+  const { data, count } = await listBookSummaries({ page, pageSize, filters, search });
     return NextResponse.json({ data, count });
   } catch (e: any) {
     return NextResponse.json({ error: String(e.message) }, { status: 500 });
