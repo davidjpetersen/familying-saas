@@ -38,24 +38,8 @@ export default async function AdminPage() {
             <h1 className="text-2xl font-semibold">Admin dashboard</h1>
             <p className="text-muted-foreground mt-1">Welcome, you have access to admin-only tools.</p>
           </div>
-          <div>
-            <Link href="/admin/book-summaries" className="btn">Manage Book Summaries</Link>
-          </div>
+  
         </div>
-
-        <section className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-4 border rounded bg-background">
-            <h2 className="text-lg font-medium">Debug</h2>
-            <pre className="bg-muted p-3 mt-2 rounded">{JSON.stringify({ userId }, null, 2)}</pre>
-          </div>
-
-          <div className="p-4 border rounded bg-background">
-            <h2 className="text-lg font-medium">Admin management</h2>
-            <div className="mt-3">
-              <AdminManager />
-            </div>
-          </div>
-        </section>
       </div>
     );
   } catch (err) {
