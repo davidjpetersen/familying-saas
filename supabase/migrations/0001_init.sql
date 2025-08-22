@@ -15,6 +15,7 @@ create table public.users (
 create table public.families (
     id uuid primary key default gen_random_uuid(),
     owner_user_id uuid references public.users(id),
+    clerk_org_id text,
     name text,
     created_at timestamptz default now()
 );

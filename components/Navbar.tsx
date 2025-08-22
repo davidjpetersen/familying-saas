@@ -11,6 +11,7 @@ import { Users, Moon } from "lucide-react";
 
 import ProfileSwitcher from "@/components/ProfileSwitcher";
 import FamilyMembersManager from "@/components/FamilyMembersManager";
+import FeaturesNavMenu from "@/components/FeaturesNavMenu";
 
 const Navbar = () => {
   const { theme } = useTheme();
@@ -26,7 +27,8 @@ const Navbar = () => {
           </SignInButton>
         </SignedOut>
         <SignedIn>
-            <ProfileSwitcher />
+
+            <FeaturesNavMenu />
       <UserButton
             appearance={{
               elements: {
