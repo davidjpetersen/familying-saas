@@ -8,25 +8,17 @@ export async function POST(req: Request) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
 
-  // Only allow the configured ADMIN_EMAIL to manage admins
-  if (!ADMIN_EMAIL) return NextResponse.json({ error: 'admin email not configured' }, { status: 500 });
-
-  // fetch Clerk user email via Clerk REST
-  if (!process.env.CLERK_API_KEY) return NextResponse.json({ error: 'clerk api key missing' }, { status: 500 });
-
-  const clerkRes = await fetch(`https://api.clerk.com/v1/users/${userId}`, { headers: { Authorization: `Bearer ${process.env.CLERK_API_KEY}` } });
-  if (!clerkRes.ok) return NextResponse.json({ error: 'clerk lookup failed' }, { status: 500 });
-  const clerkUser = await clerkRes.json();
-  const emails: string[] = (clerkUser?.email_addresses || []).map((e: any) => e?.email_address).filter(Boolean);
-  const primary = emails[0] ?? null;
-  if (primary !== ADMIN_EMAIL) return NextResponse.json({ error: 'not authorized' }, { status: 403 });
+  // Verify caller is listed in the admins table
+  const supabase = createSupabaseClient();
+  const { data: caller, error: callerErr } = await supabase.from('admins').select('*').eq('clerk_user_id', userId).limit(1).maybeSingle();
+  if (callerErr) return NextResponse.json({ error: callerErr.message }, { status: 500 });
+  if (!caller) return NextResponse.json({ error: 'not authorized' }, { status: 403 });
 
   // Manage admins: expect body { action: 'add'|'remove', clerk_user_id, email }
   const body = await req.json();
   const { action, clerk_user_id, email } = body as any;
   if (!action || !['add','remove'].includes(action)) return NextResponse.json({ error: 'invalid action' }, { status: 400 });
 
-  const supabase = createSupabaseClient();
   if (action === 'add') {
     const id = clerk_user_id ?? email ?? `${Date.now().toString(36)}`;
     const { error } = await supabase.from('admins').insert({ id, clerk_user_id, email });

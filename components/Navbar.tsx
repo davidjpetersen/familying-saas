@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import { dark, shadcn } from "@clerk/themes";
-import { Users, Moon } from "lucide-react";
+import { Users, Moon, Shield } from "lucide-react";
 
 import ProfileSwitcher from "@/components/ProfileSwitcher";
 import FamilyMembersManager from "@/components/FamilyMembersManager";
@@ -15,13 +15,36 @@ import FeaturesNavMenu from "@/components/FeaturesNavMenu";
 
 function AdminLink() {
   const { user } = useUser();
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-  if (!user || !adminEmail) return null;
-  const email = user.primaryEmailAddress?.emailAddress ?? user.emailAddresses?.[0]?.emailAddress ?? null;
-  if (!email) return null;
-  if (email !== adminEmail) return null;
+  const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    let mounted = true;
+    async function check() {
+      try {
+        const res = await fetch('/api/admin/me');
+        const json = await res.json();
+        if (!mounted) return;
+        setIsAdmin(!!json?.isAdmin);
+      } catch (e) {
+        if (!mounted) return;
+        setIsAdmin(false);
+      }
+    }
+    if (user) check();
+    return () => { mounted = false; };
+  }, [user]);
+
+  if (!user) return null;
+  if (isAdmin === null) return null; // or a small loader
+  if (!isAdmin) return null;
+
   return (
-    <Link href="/admin" className="text-sm px-2 py-1 rounded hover:bg-accent">Admin</Link>
+    <Link href="/admin" className="flex items-center">
+      <Button variant="ghost" className="text-sm px-2 py-1">
+        <Shield className="h-4 w-4 mr-2" />
+        Admin
+      </Button>
+    </Link>
   );
 }
 

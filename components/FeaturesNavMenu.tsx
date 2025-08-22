@@ -48,7 +48,7 @@ export default function FeaturesNavMenu() {
       <DropdownMenuTrigger asChild>
         <button className="inline-flex items-center gap-2 rounded px-2 py-1 hover:bg-accent">
           <List className="h-4 w-4" />
-          <span className="text-sm">Features</span>
+          <span className="text-sm">Services</span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-0">
