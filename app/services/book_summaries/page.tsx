@@ -15,7 +15,7 @@ export default function GalleryPage() {
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-semibold mb-6">Book summaries</h1>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
         {items.map((it) => (
           <Link key={it.id} href={`/services/book_summaries/${it.id}`} className="group block">
             <div className="aspect-[3/4] w-full overflow-hidden rounded shadow-sm bg-gray-100">
