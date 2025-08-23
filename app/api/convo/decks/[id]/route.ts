@@ -4,21 +4,22 @@ import { getServiceSupabaseClient } from "@/lib/supabase/service";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const supabase = getServiceSupabaseClient();
     const { data: deck, error: deckErr } = await supabase
       .from("convo_decks")
       .select("id,title,subtitle,hero_image_url")
-      .eq("id", params.id)
+      .eq("id", id)
       .eq("status", "published")
       .single();
     if (deckErr) throw deckErr;
     const { data: mappings, error: mapErr } = await supabase
       .from("convo_deck_cards")
       .select("card_id,position")
-      .eq("deck_id", params.id)
+      .eq("deck_id", id)
       .order("position");
     if (mapErr) throw mapErr;
     const mappingsData =

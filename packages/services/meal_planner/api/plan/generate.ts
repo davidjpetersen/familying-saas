@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseClient } from "@/lib/supabase";
-import { personalize, startOfWeek, Preferences } from "@/lib/mealPlanner";
+import { personalize, startOfWeek, Preferences } from "../../lib/mealPlanner";
 
 export async function POST(req: Request) {
   const supabase = createSupabaseClient();

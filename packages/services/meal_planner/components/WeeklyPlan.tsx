@@ -1,6 +1,6 @@
 "use client";
 import { RecipeCard } from "./RecipeCard";
-import type { Recipe } from "@/lib/mealPlanner";
+import type { Recipe } from "../lib/mealPlanner";
 
 export function WeeklyPlan({ plan }: { plan: Recipe[] }) {
   return (

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseClient } from '@/lib/supabase';
 
-export async function PATCH(req: Request, { params }: { params: { id: string }}) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const body = await req.json();
     const supabase = createSupabaseClient();
@@ -14,7 +15,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string }})
         const { data: row, error: rErr } = await supabase
           .from('summaries')
           .select('overview, key_insights')
-          .eq('id', params.id)
+          .eq('id', id)
           .single();
         if (rErr) throw rErr;
         if (!overview) body.overview = row?.overview;
@@ -27,7 +28,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string }})
     }
 
     body.updated_at = new Date().toISOString();
-    const { data, error } = await supabase.from('summaries').update(body).eq('id', params.id).select('*').single();
+    const { data, error } = await supabase
+      .from('summaries')
+      .update(body)
+      .eq('id', id)
+      .select('*')
+      .single();
     if (error) throw error;
     return NextResponse.json(data);
   } catch (e: any) {
