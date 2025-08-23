@@ -7,7 +7,9 @@ import { Book, Layers, Grid, Users, Bed, UtensilsCrossed, MessageSquare, Activit
 export default function AdminSidebar() {
   const items = [
     { href: '/admin', label: 'Overview', icon: Grid },
-    { href: '/admin/book-summaries', label: 'Book Summaries', icon: Book },
+    { href: '/admin/books', label: 'Books', icon: Layers },
+    { href: '/admin/summaries', label: 'Summaries', icon: Book },
+    { href: '/admin/book-summaries', label: 'Book Summaries (Legacy)', icon: Book },
     { href: '/admin/bedtime-story-generator', label: 'Bedtime Story Generator', icon: Bed },
     { href: '/admin/meal-planner', label: 'Meal Planner', icon: UtensilsCrossed },
     { href: '/admin/conversation-starters', label: 'Conversation Starters', icon: MessageSquare },

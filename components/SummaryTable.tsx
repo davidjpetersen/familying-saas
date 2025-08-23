@@ -98,7 +98,7 @@ export default function SummaryTable() {
               <td><input type="checkbox" checked={!!selected[r.id]} onChange={() => toggle(r.id)} /></td>
               <td>{r.book?.title ?? r.document?.title ?? r.id}</td>
               <td>{r.status}</td>
-              <td>{(r.tags || []).map((t: string) => <span key={t} className="px-2 py-1 mr-1 bg-gray-100 rounded text-sm lowercase">{t}</span>)}</td>
+              <td className="max-w-xs truncate text-sm text-muted-foreground">{r.tags ?? '—'}</td>
               <td>{r.updated_at ? relativeTime(new Date(r.updated_at)) : '—'}</td>
               <td><Link href={`/admin/book-summaries/${r.id}`} className="text-blue-500">Edit</Link></td>
             </tr>

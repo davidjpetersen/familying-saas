@@ -1,17 +1,21 @@
 import { z } from "zod";
 
 export const zSummary = z.object({
-  // Publication workflow: include legacy/possible values to avoid rejecting rows during migrations
-  status: z.enum(["draft", "in_review", "review", "published", "archived", "final"]).default("draft"),
-  // owner in this app may be an email or user id; keep it permissive
+  // Publication workflow (DB: text)
+  status: z.string().default("draft").nullable().optional(),
+
+  // Ownership
   owner: z.string().optional().nullable(),
   owner_user_id: z.string().uuid().optional().nullable(),
-  tags: z.array(z.string().min(1).max(128)).max(50).transform((arr) => arr.map((t) => t.toLowerCase().replace(/[^a-z0-9-_]/g, "-")) ),
+  updated_by_user_id: z.string().uuid().optional().nullable(),
+
+  // Tags (DB: text) — store a single string (e.g., comma-separated)
+  tags: z.string().optional().nullable(),
 
   // JSON blobs
-  document: z.any(),
-  book: z.any(),
-  metadata: z.any(),
+  document: z.any().optional(),
+  book: z.any().optional(),
+  metadata: z.any().optional(),
   external_ids: z.record(z.any()).optional().nullable(),
   toc: z.any().optional().nullable(),
   notable_quotes: z.any().optional().nullable(),
@@ -25,15 +29,15 @@ export const zSummary = z.object({
   publisher: z.string().optional().nullable(),
   publication_date: z.string().optional().nullable(),
   edition: z.string().optional().nullable(),
-  language_code: z.string().regex(/^[a-z]{2}$/i).optional().nullable(),
-  page_count: z.coerce.number().int().positive().optional().nullable(),
+  language_code: z.string().optional().nullable(),
+  page_count: z.coerce.number().int().optional().nullable(),
   series_name: z.string().optional().nullable(),
   series_number: z.coerce.number().optional().nullable(),
 
-  // UX / consumption
-  content_warnings: z.array(z.string()).optional().nullable(),
-  audience: z.enum(["general","parents","educators","higher_ed"]).optional().nullable(),
-  difficulty: z.enum(["intro","intermediate","advanced"]).optional().nullable(),
+  // UX / consumption (DB: text for content_warnings/audience/difficulty)
+  content_warnings: z.string().optional().nullable(),
+  audience: z.string().optional().nullable(),
+  difficulty: z.string().optional().nullable(),
   reading_time_minutes: z.coerce.number().int().optional().nullable(),
   audio_duration_minutes: z.coerce.number().int().optional().nullable(),
 

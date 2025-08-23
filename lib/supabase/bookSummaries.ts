@@ -19,9 +19,10 @@ export type BookSummaryRow = {
   status: string | null;
   book: any;
   metadata: any;
-  tags: string[] | null;
+  tags: string | null;
   owner: string | null;
   owner_user_id?: string | null;
+  updated_by_user_id?: string | null;
   slug?: string | null;
   isbn_10?: string | null;
   isbn_13?: string | null;
@@ -36,7 +37,7 @@ export type BookSummaryRow = {
   toc?: any;
   notable_quotes?: any;
   source_citations?: any;
-  content_warnings?: string[] | null;
+  content_warnings?: string | null;
   audience?: string | null;
   difficulty?: string | null;
   reading_time_minutes?: number | null;
@@ -97,12 +98,14 @@ export async function createBookSummary(payload: Partial<BookSummaryRow>, userId
   // Basic schema validation via zod
   try {
     zSummary.parse({
-      status: payload.status ?? undefined,
-      owner: payload.owner ?? undefined,
-      tags: payload.tags ?? [],
-      document: payload.document ?? {},
-      book: payload.book ?? {},
-      metadata: payload.metadata ?? {}
+  status: payload.status ?? undefined,
+  owner: payload.owner ?? undefined,
+  owner_user_id: payload.owner_user_id ?? undefined,
+  updated_by_user_id: payload.updated_by_user_id ?? undefined,
+  tags: payload.tags ?? undefined,
+  document: payload.document ?? undefined,
+  book: payload.book ?? undefined,
+  metadata: payload.metadata ?? undefined
     });
   } catch (e: any) {
     throw new Error(`validation: ${e?.message ?? String(e)}`);
@@ -112,11 +115,11 @@ export async function createBookSummary(payload: Partial<BookSummaryRow>, userId
   const insert: any = {
     id,
     // ensure core defaults
-    document: payload.document ?? {},
-    status: payload.status ?? 'draft',
-    book: payload.book ?? null,
-    metadata: payload.metadata ?? null,
-    tags: Array.isArray(payload.tags) ? payload.tags : [],
+  document: payload.document ?? {},
+  status: payload.status ?? 'draft',
+  book: payload.book ?? null,
+  metadata: payload.metadata ?? null,
+  tags: typeof payload.tags === 'string' ? payload.tags : (payload.tags == null ? null : String(payload.tags)),
     owner: payload.owner ?? null,
     // spread any other provided top-level fields (isbn, publisher, slug, etc.)
     ...payload
@@ -139,12 +142,14 @@ export async function updateBookSummary(id: string, payload: Partial<BookSummary
   // Validate minimally
   try {
     zSummary.parse({
-      status: payload.status ?? undefined,
-      owner: payload.owner ?? undefined,
-      tags: payload.tags ?? [],
-      document: payload.document ?? {},
-      book: payload.book ?? {},
-      metadata: payload.metadata ?? {}
+  status: payload.status ?? undefined,
+  owner: payload.owner ?? undefined,
+  owner_user_id: payload.owner_user_id ?? undefined,
+  updated_by_user_id: payload.updated_by_user_id ?? undefined,
+  tags: payload.tags ?? undefined,
+  document: payload.document ?? undefined,
+  book: payload.book ?? undefined,
+  metadata: payload.metadata ?? undefined
     });
   } catch (e: any) {
     throw new Error(`validation: ${e?.message ?? String(e)}`);

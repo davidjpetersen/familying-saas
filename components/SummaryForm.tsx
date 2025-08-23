@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { zSummary } from "../lib/zSummary";
@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function SummaryForm({ initial, id, onSaved }: Props) {
-  const { register, handleSubmit, setValue } = useForm({
+  const { register, handleSubmit, setValue, watch } = useForm({
     resolver: zodResolver(zSummary),
     defaultValues: {
       ...(initial || {}),
@@ -24,6 +24,10 @@ export default function SummaryForm({ initial, id, onSaved }: Props) {
   const [docText, setDocText] = useState(JSON.stringify(initial?.document ?? {}, null, 2));
   const [bookText, setBookText] = useState(JSON.stringify(initial?.book ?? {}, null, 2));
   const [metaText, setMetaText] = useState(JSON.stringify(initial?.metadata ?? {}, null, 2));
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [results, setResults] = useState<any[]>([]);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     register("document");
@@ -65,6 +69,106 @@ export default function SummaryForm({ initial, id, onSaved }: Props) {
           <button type="submit" className="btn">Save</button>
         </div>
       </div>
+
+      {/* Find book */}
+      <section className="p-4 border rounded bg-background space-y-4">
+        <h2 className="text-lg font-semibold">Find book</h2>
+        <div className="flex flex-col md:flex-row gap-2">
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border w-full px-2 py-1 rounded"
+            placeholder="Search by title, author, or paste an ISBN"
+          />
+          <button
+            type="button"
+            disabled={searching || !searchQuery.trim()}
+            onClick={async () => {
+              try {
+                setErrorMsg(null);
+                setSearching(true);
+                setResults([]);
+                const q = searchQuery.trim();
+                // crude ISBN detection: 10 or 13 digits, possibly with dashes/spaces
+                const cleaned = q.replace(/[^0-9Xx]/g, "");
+                const isIsbn = /^[0-9Xx]{10}$/.test(cleaned) || /^[0-9]{13}$/.test(cleaned);
+                const url = isIsbn ? `/api/books/lookup?isbn=${encodeURIComponent(cleaned)}` : `/api/books/lookup?q=${encodeURIComponent(q)}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`Search failed (${res.status})`);
+                const json = await res.json();
+                setResults(Array.isArray(json?.data) ? json.data : []);
+              } catch (e: any) {
+                setErrorMsg(String(e?.message || e));
+              } finally {
+                setSearching(false);
+              }
+            }}
+            className="btn md:w-32"
+          >
+            {searching ? 'Searching…' : 'Search'}
+          </button>
+        </div>
+        {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}
+        {results.length > 0 && (
+          <div className="mt-3 grid gap-3">
+            {results.map((b: any, idx: number) => (
+              <div key={`${b.source}:${b.sourceId}:${idx}`} className="flex items-start gap-3 p-3 border rounded">
+                {b.thumbnail && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={b.thumbnail} alt={b.title} className="w-14 h-20 object-cover rounded" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium truncate">{b.title}</div>
+                  {b.subtitle && <div className="text-sm text-muted-foreground truncate">{b.subtitle}</div>}
+                  <div className="text-sm text-muted-foreground truncate">{Array.isArray(b.authors) ? b.authors.join(', ') : ''}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{b.publishedDate || ''} · {b.language || ''} · {b.pageCount ? `${b.pageCount} pages` : ''}</div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  {b.previewUrl && <a href={b.previewUrl} target="_blank" rel="noreferrer" className="btn btn-outline">Preview</a>}
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => {
+                      // Prefill core fields
+                      setValue('book_title', b.title || '');
+                      setValue('book_subtitle', b.subtitle || '');
+                      setValue('publication_date', b.publishedDate || null as any);
+                      if (b.pageCount) setValue('page_count', b.pageCount as any);
+                      if (b.language) setValue('language_code', String(b.language).slice(0,2));
+                      const isbn13 = b.identifiers?.find((i: any) => String(i.type).toUpperCase().includes('13'))?.value;
+                      const isbn10 = b.identifiers?.find((i: any) => String(i.type).toUpperCase().includes('10'))?.value;
+                      if (isbn10) setValue('isbn_10', isbn10);
+                      if (isbn13) setValue('isbn_13', isbn13);
+                      if (b.previewUrl) setValue('canonical_url', b.previewUrl);
+
+                      // Update advanced JSON blobs
+                      const bookObj = {
+                        title: b.title,
+                        subtitle: b.subtitle ?? null,
+                        authors: b.authors ?? [],
+                        identifiers: b.identifiers ?? [],
+                        language: b.language ?? null,
+                        categories: b.categories ?? [],
+                        publishedDate: b.publishedDate ?? null,
+                        pageCount: b.pageCount ?? null,
+                        thumbnail: b.thumbnail ?? null,
+                        previewUrl: b.previewUrl ?? null,
+                        source: b.source,
+                        sourceId: b.sourceId,
+                        description: b.description ?? null,
+                      };
+                      setBookText(JSON.stringify(bookObj, null, 2));
+                      setMetaText(JSON.stringify({ selectedBook: bookObj }, null, 2));
+                    }}
+                  >
+                    Use
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Basic info */}
       <section className="p-4 border rounded bg-background space-y-4">
