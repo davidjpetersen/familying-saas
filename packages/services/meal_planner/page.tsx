@@ -1,20 +1,20 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { WeeklyPlan } from "@/components/meal/WeeklyPlan";
-import { ShoppingList } from "@/components/meal/ShoppingList";
-import { PreferencesModal } from "@/components/meal/PreferencesModal";
-import type { Recipe } from "@/lib/mealPlanner";
+import { WeeklyPlan } from "./components/WeeklyPlan";
+import { ShoppingList } from "./components/ShoppingList";
+import { PreferencesModal } from "./components/PreferencesModal";
+import type { Recipe } from "./lib/mealPlanner";
 
 export default function MealPlannerPage() {
   const [plan, setPlan] = useState<Recipe[]>([]);
   const [list, setList] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
-    fetch("/api/meal-plan?family_id=demo")
+    fetch("/api/meal_planner/plan?family_id=demo")
       .then((r) => r.json())
       .then((res) => setPlan(res.data?.plan || []));
-    fetch("/api/shopping-list?family_id=demo")
+    fetch("/api/meal_planner/shopping-list?family_id=demo")
       .then((r) => r.json())
       .then((res) => setList(res.data || {}));
   }, []);

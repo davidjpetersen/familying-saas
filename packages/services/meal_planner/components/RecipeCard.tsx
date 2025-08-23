@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import type { Recipe } from "@/lib/mealPlanner";
+import type { Recipe } from "../lib/mealPlanner";
 
 export function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (

@@ -21,8 +21,8 @@ export default function ActivitySidebar({ summaryId }: { summaryId?: string }) {
         if (!res.ok) return;
         const data = await res.json();
         if (mounted) setItems(data.slice(0, 10));
-  } catch {
-      console.error('Failed to load activity', e);  
+      } catch (e) {
+        console.error('Failed to load activity', e);
       }
     }
     load();

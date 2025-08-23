@@ -3,10 +3,10 @@ import { createSupabaseClient } from '@/lib/supabase';
 import { uploadJson } from '@/lib/storage';
 import { buildSummaryPayloadById } from '@/lib/payloads';
 
-export async function POST(_req: Request, { params }: { params: { id: string }}) {
+export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id: summaryId } = await params;
     const supabase = createSupabaseClient();
-    const summaryId = params.id;
 
     // Read current summary
     const { data: s, error: sErr } = await supabase

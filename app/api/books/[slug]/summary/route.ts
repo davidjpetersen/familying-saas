@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server';
 import { createSupabaseClient } from '@/lib/supabase';
 import { downloadJson, parseSupabaseUri } from '@/lib/storage';
 
-export async function GET(_req: Request, { params }: { params: { slug: string }}) {
+export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const { slug } = await params;
     const supabase = createSupabaseClient();
     // Find book by slug and join published summary
     const { data: books, error: bErr } = await supabase
       .from('books')
       .select('id, slug, title, subtitle, authors, lang, cover_uri, affiliate_links, summaries: summaries ( id, is_published, render_version, payload_uri, pdf_uri, title, subtitle, overview, key_insights, chapter_summaries, tags, updated_at )')
-      .eq('slug', params.slug)
+      .eq('slug', slug)
       .limit(1);
     if (bErr) throw bErr;
     if (!books || books.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });

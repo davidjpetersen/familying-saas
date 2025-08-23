@@ -4,7 +4,7 @@ import { getServiceSupabaseClient } from "@/lib/supabase/service";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const body = (await req.json()) as { cardId: string; action: "favorite"|"hide"|"rate"|"used"; rating?: number };

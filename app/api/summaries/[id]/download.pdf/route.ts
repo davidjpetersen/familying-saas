@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { createSupabaseClient } from '@/lib/supabase';
 import { parseSupabaseUri, signFileUrl } from '@/lib/storage';
 
-export async function GET(_req: Request, { params }: { params: { id: string }}) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = createSupabaseClient();
-  const { data, error } = await supabase.from('summaries').select('pdf_uri').eq('id', params.id).single();
+  const { data, error } = await supabase.from('summaries').select('pdf_uri').eq('id', id).single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   const uri = (data as any)?.pdf_uri as string | null;
   if (!uri) return NextResponse.json({ error: 'Not ready' }, { status: 404 });

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseClient } from "@/lib/supabase";
-import { startOfWeek } from "@/lib/mealPlanner";
+import { startOfWeek } from "../lib/mealPlanner";
 
 export async function GET(req: Request) {
   const supabase = createSupabaseClient();
@@ -12,12 +12,12 @@ export async function GET(req: Request) {
   const weekStart = startOfWeek();
   const { data, error } = await supabase
     .from("meal_plans")
-    .select("plan, shopping_list")
+    .select("shopping_list")
     .eq("family_id", familyId)
     .eq("week_start", weekStart)
     .single();
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  return NextResponse.json({ data });
+  return NextResponse.json({ data: data?.shopping_list || {} });
 }
