@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import * as React from "react";
-import { Book, Layers, Grid, Users, Bed, UtensilsCrossed, MessageSquare, Activity } from "lucide-react";
+import { Book, Layers, Grid, Users, Bed, UtensilsCrossed, MessageSquare, Activity, Waves } from "lucide-react";
 
 export default function AdminSidebar() {
   const items = [
@@ -14,6 +14,7 @@ export default function AdminSidebar() {
     { href: '/admin/meal-planner', label: 'Meal Planner', icon: UtensilsCrossed },
     { href: '/admin/conversation-starters', label: 'Conversation Starters', icon: MessageSquare },
     { href: '/admin/activities', label: 'Activities', icon: Activity },
+    { href: '/admin/soundscapes', label: 'Soundscapes', icon: Waves },
     { href: '/admin/admins', label: 'Admins', icon: Users },
   ];
 
