@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 
-export default function InsightModal({ open, onClose, insight }: { open: boolean; onClose: () => void; insight: any | null }) {
+type Insight = { id?: string; type?: string; content?: React.ReactNode };
+
+export default function InsightModal({ open, onClose, insight }: { open: boolean; onClose: () => void; insight: Insight | null }) {
   if (!open || !insight) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">

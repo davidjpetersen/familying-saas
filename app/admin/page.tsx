@@ -1,11 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import AdminManager from '@/components/AdminManager';
-import Link from 'next/link';
 import { createSupabaseClient } from '@/lib/supabase';
-
-const CLERK_API_BASE = "https://api.clerk.com/v1";
-const ALLOWED_EMAIL = process.env.ADMIN_EMAIL ?? "david.petersen@familying.org";
 
 export default async function AdminPage() {
   const { userId } = await auth();

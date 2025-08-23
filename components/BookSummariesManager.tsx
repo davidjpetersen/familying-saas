@@ -36,6 +36,7 @@ export default function BookSummariesManager() {
     try {
       doc = docText ? JSON.parse(docText) : {};
     } catch (err) {
+      console.error('Failed to parse document JSON', err);
       setError('Invalid JSON in document');
       return;
     }

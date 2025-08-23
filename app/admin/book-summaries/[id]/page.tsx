@@ -3,7 +3,8 @@ import { getBookSummary } from '../../../../lib/supabase/bookSummaries'
 import SummaryForm from '../../../../components/SummaryForm'
 import ActivitySidebar from '../../../../components/ActivitySidebar'
 
-export default async function Page({ params }: any) {
+type Params = { id: string };
+export default async function Page({ params }: { params: Params }) {
   const data = await getBookSummary(params.id);
   return (
     <main className="p-6 flex gap-6">

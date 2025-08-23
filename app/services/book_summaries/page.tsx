@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { createSupabaseClient } from '../../../lib/supabase';
 
@@ -49,7 +50,13 @@ export default async function GalleryPage() {
               <Link key={s.id} href={`/services/book_summaries/${s.id}`} className="group block">
                 <div className="relative">
                   <div className="aspect-[3/4] w-full overflow-hidden rounded shadow-sm bg-gray-100">
-                    <img src={img} alt={title} className="w-full h-full object-cover transform group-hover:scale-105 transition" />
+                    <Image
+                      src={img}
+                      alt={title}
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 16vw"
+                      className="object-cover transform group-hover:scale-105 transition"
+                    />
                   </div>
                   <span className="absolute top-2 left-2 inline-flex items-center px-2 py-1 text-xs font-semibold rounded bg-green-600 text-white">{s.status === 'final' ? 'Published' : s.status === 'draft' ? 'Draft' : (s.status ?? 'Unknown')}</span>
                 </div>

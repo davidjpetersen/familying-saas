@@ -2,11 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Check, Lock } from "lucide-react";
 
 // Consumes server endpoint that returns { plan, features }
+type Feature = { id?: string; slug?: string; name?: string };
+type Plan = { slug?: string; name?: string; features?: Feature[] };
+
 export default function FeaturesNavMenu() {
-  const [plans, setPlans] = React.useState<any[] | null>(null);
+  const [plans, setPlans] = React.useState<Plan[] | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [userFeatures, setUserFeatures] = React.useState<string[] | null>(null);
 
@@ -18,7 +20,7 @@ export default function FeaturesNavMenu() {
     ])
       .then(([plansRes, featuresRes]) => {
         if (!mounted) return;
-        setPlans(Array.isArray(plansRes?.data) ? plansRes.data : []);
+        setPlans(Array.isArray(plansRes?.data) ? (plansRes.data as Plan[]) : []);
         setUserFeatures(Array.isArray(featuresRes?.features) ? featuresRes.features : []);
       })
       .catch(() => {
@@ -32,13 +34,9 @@ export default function FeaturesNavMenu() {
     };
   }, []);
 
-  function humanLabel(key: string) {
-    return key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-  }
-
   // Render horizontal link menu
-  const premium = plans?.find((p: any) => p.slug === 'familying_premium' || p.name?.toLowerCase().includes('premium'));
-  const planFeatures: any[] = Array.isArray(premium?.features) ? premium.features : [];
+  const premium = plans?.find((p) => p.slug === 'familying_premium' || p.name?.toLowerCase().includes('premium'));
+  const planFeatures: Feature[] = Array.isArray(premium?.features) ? (premium.features as Feature[]) : [];
   const enabledSet = new Set(userFeatures || []);
   const allEnabled = planFeatures.length > 0 && planFeatures.every((f) => enabledSet.has(f.slug || f.id || ''));
 
@@ -50,8 +48,8 @@ export default function FeaturesNavMenu() {
         <div className="text-sm text-muted-foreground">No plans available</div>
       ) : (
         <div className="flex items-center gap-2 overflow-x-auto">
-          {planFeatures.map((f: any) => {
-            const slug = f.slug ?? f.id;
+          {planFeatures.map((f) => {
+            const slug = (f.slug ?? f.id ?? '') as string;
             const enabled = enabledSet.has(slug);
             return (
               <Link key={slug} href={`/services/${slug}`} className={`text-sm px-3 py-1 rounded hover:bg-accent ${!enabled ? 'opacity-70' : ''}`}>
@@ -66,23 +64,5 @@ export default function FeaturesNavMenu() {
         <Link href="/subscription" className="ml-4 px-3 py-1 bg-primary text-white rounded text-sm">Upgrade</Link>
       )}
     </nav>
-  );
-}
-
-function ListItem({ href, title, children, subtle, enabled }: { href: string; title: string; children?: React.ReactNode; subtle?: boolean; enabled?: boolean }) {
-  return (
-    <Link href={href} className="block w-full">
-      <div className={`rounded-md p-3 hover:bg-accent/50 ${subtle ? 'opacity-70' : ''}`}>
-        <div className="flex items-center gap-2">
-          <div className="flex-none">
-            {enabled ? <Check className="size-4 text-green-500" /> : <Lock className="size-4 text-muted-foreground" />}
-          </div>
-          <div className="flex-1">
-            <div className="text-sm font-medium">{title}</div>
-            {children ? <div className="text-xs text-muted-foreground mt-1 leading-tight">{children}</div> : null}
-          </div>
-        </div>
-      </div>
-    </Link>
   );
 }

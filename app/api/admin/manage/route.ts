@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import { createSupabaseClient } from '@/lib/supabase';
 import { auth } from '@clerk/nextjs/server';
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-
 export async function POST(req: Request) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });

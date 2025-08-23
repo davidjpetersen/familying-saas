@@ -5,6 +5,7 @@ function generateId() {
 }
 
 export async function GET(req: Request) {
+  console.log(req);
   const supabase = createSupabaseClient();
   const { data, error } = await supabase.from('book_summaries').select('id, document, status, tags, owner, created_at').order('created_at', { ascending: false }).limit(50);
   if (error) {

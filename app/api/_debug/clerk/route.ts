@@ -19,7 +19,7 @@ export async function GET() {
         billingKeys = Object.keys(ccAny.billing || {}).slice(0, 200);
       }
     } catch (e) {
-      // ignore
+      console.error('Error accessing billing:', e);
     }
 
     const payload = {

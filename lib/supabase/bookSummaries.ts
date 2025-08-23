@@ -1,13 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
 import { zSummary } from "../zSummary";
-
-function getServiceSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url) throw new Error("NEXT_PUBLIC_SUPABASE_URL is required");
-  if (!serviceKey) throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for server-side operations");
-  return createClient(url, serviceKey);
-}
+import { getServiceSupabaseClient } from "./service";
 
 function generateId() {
   return `bs_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
@@ -131,7 +123,7 @@ export async function createBookSummary(payload: Partial<BookSummaryRow>, userId
   // Audit log (best-effort)
   try {
     await supabase.from('book_summaries_audit').insert({ summary_id: id, user_id: userId ?? null, action: 'create', changes: insert });
-  } catch (_) {}
+  } catch {}
 
   return data;
 }
@@ -160,7 +152,7 @@ export async function updateBookSummary(id: string, payload: Partial<BookSummary
 
   try {
     await supabase.from('book_summaries_audit').insert({ summary_id: id, user_id: userId ?? null, action: 'update', changes: payload });
-  } catch (_) {}
+  } catch {}
 
   return data;
 }
@@ -172,7 +164,7 @@ export async function deleteBookSummary(id: string, userId?: string) {
 
   try {
     await supabase.from('book_summaries_audit').insert({ summary_id: id, user_id: userId ?? null, action: 'delete', changes: null });
-  } catch (_) {}
+  } catch {}
 
   return true;
 }
@@ -185,7 +177,7 @@ export async function bulkDeleteBookSummaries(ids: string[], userId?: string) {
   try {
     const rows = ids.map((id) => ({ summary_id: id, user_id: userId ?? null, action: 'delete', changes: null }));
     await supabase.from('book_summaries_audit').insert(rows);
-  } catch (_) {}
+  } catch {}
 
   return true;
 }

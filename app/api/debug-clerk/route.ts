@@ -11,7 +11,9 @@ export async function GET() {
     try {
       billingExists = Boolean(ccAny?.billing);
       if (billingExists) billingKeys = Object.keys(ccAny.billing || {}).slice(0, 200);
-    } catch (e) {}
+    } catch (e) {
+      console.error('Error accessing billing:', e);
+    }
     return NextResponse.json({ nodeEnv: process.env.NODE_ENV ?? null, topKeys, billingExists, billingKeys, hasClerkApiKey: Boolean(process.env.CLERK_API_KEY) });
   } catch (err: any) {
     return new NextResponse(String(err?.message ?? err), { status: 500 });

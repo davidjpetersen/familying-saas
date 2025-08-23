@@ -1,9 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { listBookSummaries, bulkDeleteBookSummaries } from "../lib/supabase/bookSummaries";
 
-type Row = any;
+type Row = {
+  id: string;
+  status?: string | null;
+  tags?: string | null;
+  updated_at?: string | null;
+  document?: { title?: string } | null;
+  book?: { title?: string } | null;
+};
 
 export default function SummaryTable() {
   const [rows, setRows] = useState<Row[]>([]);

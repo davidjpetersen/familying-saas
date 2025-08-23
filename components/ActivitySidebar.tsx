@@ -6,7 +6,7 @@ type Activity = {
   summary_id: string;
   user_id: string;
   action: string;
-  changes: any;
+  changes: unknown;
   created_at: string;
 };
 
@@ -21,8 +21,8 @@ export default function ActivitySidebar({ summaryId }: { summaryId?: string }) {
         if (!res.ok) return;
         const data = await res.json();
         if (mounted) setItems(data.slice(0, 10));
-      } catch (e) {
-        // ignore
+  } catch {
+      console.error('Failed to load activity', e);  
       }
     }
     load();

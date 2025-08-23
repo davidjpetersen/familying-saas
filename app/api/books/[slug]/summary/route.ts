@@ -21,10 +21,10 @@ export async function GET(_req: Request, { params }: { params: { slug: string }}
     if (summary.payload_uri) {
       const parsed = parseSupabaseUri(summary.payload_uri as string);
       if (parsed) {
-        try {
+    try {
           const payload = await downloadJson<any>(supabase, parsed.bucket, parsed.path);
           return NextResponse.json(payload);
-        } catch (_) {
+  } catch {
           // fall through to inline payload
         }
       }
@@ -62,7 +62,7 @@ export async function GET(_req: Request, { params }: { params: { slug: string }}
     };
 
     return NextResponse.json(payload);
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e?.message || e) }, { status: 500 });
+  } catch (e) {
+    return NextResponse.json({ error: String((e as Error)?.message || e) }, { status: 500 });
   }
 }

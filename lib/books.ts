@@ -2,7 +2,6 @@ import type { BookMetadata, BookIdentifier } from '@/types/book';
 
 const GOOGLE_BOOKS_API = 'https://www.googleapis.com/books/v1/volumes';
 const OPENLIBRARY_SEARCH_API = 'https://openlibrary.org/search.json';
-const OPENLIBRARY_BOOKS_API = 'https://openlibrary.org/api/books';
 
 type SearchParams = {
   q?: string; // free text search
@@ -21,9 +20,6 @@ function toHttps(url?: string | null): string | null {
   }
 }
 
-function uniq<T>(arr: T[]): T[] {
-  return Array.from(new Set(arr.filter(Boolean)));
-}
 
 function normalizeGoogleItem(item: any): BookMetadata | null {
   if (!item || !item.volumeInfo) return null;

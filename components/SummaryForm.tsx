@@ -1,19 +1,27 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { zSummary } from "../lib/zSummary";
 import JsonField from "./JsonField";
 import TagInput from "./TagInput";
 
-type Props = {
-  initial?: any;
+type SummaryRow = {
   id?: string;
-  onSaved?: (row: any) => void;
+  document?: unknown;
+  book?: { title?: string; subtitle?: string } | null;
+  metadata?: unknown;
+  tags?: string | string[] | null;
+};
+
+type Props = {
+  initial?: SummaryRow;
+  id?: string;
+  onSaved?: (row: unknown) => void;
 };
 
 export default function SummaryForm({ initial, id, onSaved }: Props) {
-  const { register, handleSubmit, setValue, watch } = useForm({
+  const { register, handleSubmit, setValue } = useForm({
     resolver: zodResolver(zSummary),
     defaultValues: {
       ...(initial || {}),
@@ -26,7 +34,22 @@ export default function SummaryForm({ initial, id, onSaved }: Props) {
   const [metaText, setMetaText] = useState(JSON.stringify(initial?.metadata ?? {}, null, 2));
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
-  const [results, setResults] = useState<any[]>([]);
+  type SearchResult = {
+    title?: string;
+    subtitle?: string | null;
+    authors?: string[];
+  categories?: string[];
+    publishedDate?: string | null;
+    pageCount?: number | null;
+    language?: string | null;
+    identifiers?: { type: string; value: string }[];
+    thumbnail?: string | null;
+    previewUrl?: string | null;
+    source?: string;
+    sourceId?: string;
+    description?: string | null;
+  };
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -35,15 +58,17 @@ export default function SummaryForm({ initial, id, onSaved }: Props) {
     register("metadata");
   }, [register]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: Record<string, unknown>) => {
     try {
       const document = JSON.parse(docText || "{}");
       const book = JSON.parse(bookText || "{}");
       if (data.book_title !== undefined) book.title = data.book_title;
       if (data.book_subtitle !== undefined) book.subtitle = data.book_subtitle;
-      const metadata = JSON.parse(metaText || "{}");
-      const { book_title, book_subtitle, ...rest } = data;
-      const payload = { ...rest, document, book, metadata };
+  const metadata = JSON.parse(metaText || "{}");
+  const rest: Record<string, unknown> = { ...data };
+  delete (rest as any).book_title;
+  delete (rest as any).book_subtitle;
+  const payload: Record<string, unknown> = { ...rest, document, book, metadata };
       const res = await fetch(id ? `/api/admin/book-summaries/${id}` : `/api/admin/book-summaries`, { method: id ? "PUT" : "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error("Save failed");
       const saved = await res.json();
@@ -97,8 +122,8 @@ export default function SummaryForm({ initial, id, onSaved }: Props) {
                 if (!res.ok) throw new Error(`Search failed (${res.status})`);
                 const json = await res.json();
                 setResults(Array.isArray(json?.data) ? json.data : []);
-              } catch (e: any) {
-                setErrorMsg(String(e?.message || e));
+              } catch (e) {
+                setErrorMsg(String((e as Error)?.message || e));
               } finally {
                 setSearching(false);
               }
@@ -111,7 +136,7 @@ export default function SummaryForm({ initial, id, onSaved }: Props) {
         {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}
         {results.length > 0 && (
           <div className="mt-3 grid gap-3">
-            {results.map((b: any, idx: number) => (
+            {results.map((b, idx: number) => (
               <div key={`${b.source}:${b.sourceId}:${idx}`} className="flex items-start gap-3 p-3 border rounded">
                 {b.thumbnail && (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -135,8 +160,8 @@ export default function SummaryForm({ initial, id, onSaved }: Props) {
                       setValue('publication_date', b.publishedDate || null as any);
                       if (b.pageCount) setValue('page_count', b.pageCount as any);
                       if (b.language) setValue('language_code', String(b.language).slice(0,2));
-                      const isbn13 = b.identifiers?.find((i: any) => String(i.type).toUpperCase().includes('13'))?.value;
-                      const isbn10 = b.identifiers?.find((i: any) => String(i.type).toUpperCase().includes('10'))?.value;
+                      const isbn13 = b.identifiers?.find((i) => String(i.type).toUpperCase().includes('13'))?.value;
+                      const isbn10 = b.identifiers?.find((i) => String(i.type).toUpperCase().includes('10'))?.value;
                       if (isbn10) setValue('isbn_10', isbn10);
                       if (isbn13) setValue('isbn_13', isbn13);
                       if (b.previewUrl) setValue('canonical_url', b.previewUrl);
@@ -197,7 +222,7 @@ export default function SummaryForm({ initial, id, onSaved }: Props) {
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm">Tags</label>
-            <TagInput value={initial?.tags ?? []} onChange={(v) => setValue("tags", v)} />
+            <TagInput value={Array.isArray(initial?.tags) ? (initial?.tags as string[]) : (initial?.tags ? String(initial?.tags).split(',').map(s => s.trim()).filter(Boolean) : [])} onChange={(v) => setValue("tags", v)} />
           </div>
         </div>
       </section>

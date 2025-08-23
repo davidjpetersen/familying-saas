@@ -41,10 +41,10 @@ export async function POST(req: Request) {
 
     // identify owner via Clerk session
     let ownerClerkId: string | null = null;
-    try {
+  try {
       const session = await auth();
       ownerClerkId = (session as any)?.userId ?? null;
-    } catch (e) {
+  } catch {
       ownerClerkId = null;
     }
 
@@ -68,10 +68,10 @@ export async function POST(req: Request) {
 
     // If we have a Clerk owner and no clerk_org_id, try to create a Clerk Organization and persist it
     let clerkOrgId: string | null = null;
-    try {
+  try {
       const { data: famRow } = await supabase.from('families').select('clerk_org_id').eq('id', familyId).single();
       clerkOrgId = famRow?.clerk_org_id ?? null;
-    } catch (e) {
+  } catch {
       clerkOrgId = null;
     }
 

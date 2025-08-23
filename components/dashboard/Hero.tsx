@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 type Props = {
   title: string;
@@ -25,7 +26,7 @@ export default function Hero({ title, description, ctaLabel = "Play", imageSrc =
         </div>
         <div className="md:w-1/2">
           <div className="h-56 md:h-48 lg:h-64 w-full relative">
-            <img src={imageSrc} alt="hero" className="absolute inset-0 h-full w-full object-cover opacity-95" />
+            <Image src={imageSrc} alt="hero" fill className="object-cover opacity-95" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
           </div>
         </div>

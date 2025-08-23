@@ -9,7 +9,6 @@ import { useTheme } from "@/components/ThemeProvider";
 import { dark, shadcn } from "@clerk/themes";
 import { Users, Moon, Shield } from "lucide-react";
 
-import ProfileSwitcher from "@/components/ProfileSwitcher";
 import FamilyMembersManager from "@/components/FamilyMembersManager";
 import FeaturesNavMenu from "@/components/FeaturesNavMenu";
 
@@ -25,7 +24,8 @@ function AdminLink() {
         const json = await res.json();
         if (!mounted) return;
         setIsAdmin(!!json?.isAdmin);
-      } catch (e) {
+  } catch (e) {
+      console.error('Error checking admin status:', e);
         if (!mounted) return;
         setIsAdmin(false);
       }
