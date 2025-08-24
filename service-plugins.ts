@@ -26,6 +26,17 @@ export function getServicePlugin(id: string) {
 
 // Import plugins here
 import mealPlanner from './packages/services/meal_planner/service.plugin';
+import activities from './packages/services/activities/service.plugin';
+import bedtimeStoryGenerator from './packages/services/bedtime_story_generator/service.plugin';
+import bookSummaries from './packages/services/book_summaries/service.plugin';
+import conversationStarters from './packages/services/conversation_starters/service.plugin';
+import soundscapes from './packages/services/soundscapes/service.plugin';
+
 register(mealPlanner);
+register(activities);
+register(bedtimeStoryGenerator);
+register(bookSummaries);
+register(conversationStarters);
+register(soundscapes);
 
 export const plugins = registry;
