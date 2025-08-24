@@ -45,9 +45,10 @@ async function run() {
     }
   }
 
-  // Optional: apply any legacy root migrations last under a core namespace
+  // Optional: apply legacy root migrations only if explicitly enabled
+  const applyLegacy = process.env.APPLY_LEGACY_ROOT_MIGRATIONS === 'true';
   const legacyDir = path.join(root, 'supabase', 'migrations');
-  if (fs.existsSync(legacyDir)) {
+  if (applyLegacy && fs.existsSync(legacyDir)) {
     const files = fs.readdirSync(legacyDir).filter((f) => f.endsWith('.sql')).sort();
     for (const file of files) {
       const id = `core:${file}`;
