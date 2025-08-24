@@ -69,7 +69,7 @@ export default function SummaryForm({ initial, id, onSaved }: Props) {
   delete (rest as any).book_title;
   delete (rest as any).book_subtitle;
   const payload: Record<string, unknown> = { ...rest, document, book, metadata };
-      const res = await fetch(id ? `/api/admin/book-summaries/${id}` : `/api/admin/book-summaries`, { method: id ? "PUT" : "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
+      const res = await fetch(id ? `/api/admin/book_summaries/book-summaries/${id}` : `/api/admin/book_summaries/book-summaries`, { method: id ? "PUT" : "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error("Save failed");
       const saved = await res.json();
       onSaved?.(saved);
@@ -89,7 +89,7 @@ export default function SummaryForm({ initial, id, onSaved }: Props) {
         </div>
         <div className="flex gap-2">
           {id && (
-            <button type="button" onClick={() => { if (confirm('Delete?')) { fetch(`/api/admin/book-summaries/${id}`, { method: 'DELETE' }).then(() => { alert('Deleted'); location.href = '/admin/book-summaries' }) } }} className="btn btn-outline">Delete</button>
+            <button type="button" onClick={() => { if (confirm('Delete?')) { fetch(`/api/admin/book_summaries/book-summaries/${id}`, { method: 'DELETE' }).then(() => { alert('Deleted'); location.href = '/admin/book_summaries' }) } }} className="btn btn-outline">Delete</button>
           )}
           <button type="submit" className="btn">Save</button>
         </div>

@@ -1,6 +1,6 @@
 import { getServicePlugin } from '@/service-plugins.server';
 
-function resolveHandler(method: 'GET' | 'POST', id: string, path: string[]) {
+function resolveHandler(method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH', id: string, path: string[]) {
   const plugin = getServicePlugin(id);
   if (!plugin) return undefined;
   const key = path.join('/');
@@ -29,6 +29,39 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 export async function POST(req: Request, { params }: { params: Promise<{ id: string; path: string[] }> }) {
   const { id, path = [] } = await params;
   const fn = resolveHandler('POST', id, path);
+  if (!fn) return new Response('Not found', { status: 404 });
+  const ctxParams: Record<string, string> = {};
+  if (path.length >= 2) {
+    ctxParams.id = path[1];
+  }
+  return fn(req, { params: ctxParams });
+}
+
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string; path: string[] }> }) {
+  const { id, path = [] } = await params;
+  const fn = resolveHandler('PUT', id, path);
+  if (!fn) return new Response('Not found', { status: 404 });
+  const ctxParams: Record<string, string> = {};
+  if (path.length >= 2) {
+    ctxParams.id = path[1];
+  }
+  return fn(req, { params: ctxParams });
+}
+
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string; path: string[] }> }) {
+  const { id, path = [] } = await params;
+  const fn = resolveHandler('DELETE', id, path);
+  if (!fn) return new Response('Not found', { status: 404 });
+  const ctxParams: Record<string, string> = {};
+  if (path.length >= 2) {
+    ctxParams.id = path[1];
+  }
+  return fn(req, { params: ctxParams });
+}
+
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string; path: string[] }> }) {
+  const { id, path = [] } = await params;
+  const fn = resolveHandler('PATCH', id, path);
   if (!fn) return new Response('Not found', { status: 404 });
   const ctxParams: Record<string, string> = {};
   if (path.length >= 2) {

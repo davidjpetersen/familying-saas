@@ -1,6 +1,10 @@
 import BookSummariesPage from './page';
 import BookSummariesAdminPage from './admin/page';
 import { GET as getSummaries, POST as upsertSummary } from './api/book-summaries';
+import { GET as getAdminSummaries, POST as createAdminSummary } from './api/admin/book-summaries';
+import { GET as getAdminSummary, PUT as updateAdminSummary, DELETE as deleteAdminSummary } from './api/admin/[id]';
+import { POST as bulkDeleteAdminSummaries } from './api/admin/bulk-delete';
+import { GET as getAdminActivity } from './api/admin/[id]/activity';
 import type { FeatureManifest } from '@familying/feature-registry';
 
 const plugin: FeatureManifest = {
@@ -12,6 +16,12 @@ const plugin: FeatureManifest = {
   adminPage: BookSummariesAdminPage,
   routes: {
     'book-summaries': { GET: getSummaries, POST: upsertSummary },
+  },
+  adminRoutes: {
+    'book-summaries': { GET: getAdminSummaries, POST: createAdminSummary },
+    'book-summaries/[id]': { GET: getAdminSummary, PUT: updateAdminSummary, DELETE: deleteAdminSummary },
+    'book-summaries/bulk-delete': { POST: bulkDeleteAdminSummaries },
+    'book-summaries/[id]/activity': { GET: getAdminActivity },
   },
   nav: [{ id: 'book_summaries', label: 'Book Summaries', href: '/services/book_summaries' }],
   env: { keys: ['NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY'] },

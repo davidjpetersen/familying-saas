@@ -17,7 +17,7 @@ export default function ActivitySidebar({ summaryId }: { summaryId?: string }) {
     let mounted = true;
     async function load() {
       try {
-        const res = await fetch(`/api/admin/book-summaries/${summaryId ?? "_all"}/activity`);
+        const res = await fetch(`/api/admin/book_summaries/book-summaries/${summaryId ?? "_all"}/activity`);
         if (!res.ok) return;
         const data = await res.json();
         if (mounted) setItems(data.slice(0, 10));

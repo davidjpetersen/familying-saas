@@ -4,6 +4,9 @@ export type ApiContext = { params: Record<string, string> };
 export type ApiRouteHandlers = {
   GET?: (req: Request, ctx?: ApiContext) => Promise<Response>;
   POST?: (req: Request, ctx?: ApiContext) => Promise<Response>;
+  PUT?: (req: Request, ctx?: ApiContext) => Promise<Response>;
+  DELETE?: (req: Request, ctx?: ApiContext) => Promise<Response>;
+  PATCH?: (req: Request, ctx?: ApiContext) => Promise<Response>;
 };
 
 export type NavItem = { id: string; label: string; href: string; icon?: string };
@@ -17,6 +20,7 @@ export type FeatureManifest = {
   page?: ComponentType<any>;
   adminPage?: ComponentType<any>;
   routes?: Record<string, ApiRouteHandlers>;
+  adminRoutes?: Record<string, ApiRouteHandlers>;
   nav?: NavItem[];
   permissions?: Permission[];
   migrations?: { dir: string; schema?: string }[];

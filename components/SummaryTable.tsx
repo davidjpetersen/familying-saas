@@ -28,7 +28,7 @@ export default function SummaryTable() {
       qp.set('pageSize', String(25));
       if (search) qp.set('search', search);
       if (statusFilter) qp.set('status', statusFilter);
-      const res = await fetch(`/api/admin/book-summaries?${qp.toString()}`);
+      const res = await fetch(`/api/admin/book_summaries/book-summaries?${qp.toString()}`);
       if (!res.ok) return;
       const { data, count } = await res.json();
       if (mounted) {
@@ -58,7 +58,7 @@ export default function SummaryTable() {
     const ids = Object.keys(selected).filter((k) => selected[k]);
     if (ids.length === 0) return;
     if (!confirm(`Delete ${ids.length} summaries? This cannot be undone.`)) return;
-    const res = await fetch(`/api/admin/book-summaries/bulk-delete`, { method: "POST", body: JSON.stringify({ ids }) });
+    const res = await fetch(`/api/admin/book_summaries/book-summaries/bulk-delete`, { method: "POST", body: JSON.stringify({ ids }) });
     if (res.ok) {
       setRows((r) => r.filter((row) => !ids.includes(row.id)));
       setSelected({});
@@ -82,7 +82,7 @@ export default function SummaryTable() {
           </select>
         </div>
         <div>
-          <Link href="/admin/book-summaries/new" className="btn">New Summary</Link>
+          <Link href="/admin/book_summaries/new" className="btn">New Summary</Link>
           <button onClick={bulkDelete} className="ml-2 btn">Delete selected</button>
         </div>
       </div>
@@ -106,7 +106,7 @@ export default function SummaryTable() {
               <td>{r.status}</td>
               <td className="max-w-xs truncate text-sm text-muted-foreground">{r.tags ?? '—'}</td>
               <td>{r.updated_at ? relativeTime(new Date(r.updated_at)) : '—'}</td>
-              <td><Link href={`/admin/book-summaries/${r.id}`} className="text-blue-500">Edit</Link></td>
+              <td><Link href={`/admin/book_summaries/${r.id}`} className="text-blue-500">Edit</Link></td>
             </tr>
           ))}
         </tbody>

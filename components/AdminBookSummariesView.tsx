@@ -15,7 +15,7 @@ export default function AdminBookSummariesView() {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch('/api/admin/book-summaries')
+    fetch('/api/admin/book_summaries/book-summaries')
       .then((res) => res.json())
       .then((json) => {
         if (!mounted) return;
@@ -50,7 +50,7 @@ export default function AdminBookSummariesView() {
           <button onClick={() => setView('table')} className={`px-3 py-1 rounded ${view === 'table' ? 'bg-gray-200' : 'bg-transparent'}`}>Table</button>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/admin/book-summaries/new" className="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded">New Book</Link>
+          <Link href="/admin/book_summaries/new" className="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded">New Book</Link>
         </div>
       </div>
 
@@ -65,7 +65,7 @@ export default function AdminBookSummariesView() {
             <div className="col-span-full text-center text-sm text-muted-foreground">No summaries yet. Create your first summary.</div>
           ) : (
             items.map((it) => (
-              <Link key={it.id} href={`/admin/book-summaries/${it.id}`} className="block group border rounded-lg overflow-hidden hover:shadow">
+              <Link key={it.id} href={`/admin/book_summaries/${it.id}`} className="block group border rounded-lg overflow-hidden hover:shadow">
                 <div className="h-40 bg-gray-50 flex items-center justify-center overflow-hidden">
                   {it.book?.cover_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
