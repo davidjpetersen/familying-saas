@@ -1,1 +1,13 @@
-export { default } from '../../../app/services/conversation_starters/page';
+import Link from "next/link";
+
+export default function ConversationStartersPage() {
+  return (
+    <main className="max-w-7xl mx-auto px-4 py-6">
+      <h1 className="text-2xl font-semibold mb-3">Conversation Starters</h1>
+      <p className="text-muted-foreground mb-4">Prompts and questions to spark meaningful family conversations.</p>
+      <div className="space-x-2">
+        <Link href="/dashboard" className="text-sm text-primary underline">Back to dashboard</Link>
+      </div>
+    </main>
+  );
+}

@@ -1,1 +1,1 @@
-export { default } from '../../../../app/services/book_summaries/[id]/page';
+export { default } from './page-impl';
