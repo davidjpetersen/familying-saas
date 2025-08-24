@@ -1,22 +1,8 @@
-import type { ComponentType } from 'react';
+import type { FeatureManifest } from '@familying/feature-registry';
 
-export interface ApiRouteHandlers {
-  GET?: (req: Request) => Promise<Response>;
-  POST?: (req: Request) => Promise<Response>;
-}
+const registry: FeatureManifest[] = [];
 
-export interface ServicePlugin {
-  id: string;
-  title: string;
-  description: string;
-  version: string;
-  Page: ComponentType<any>;
-  routes?: Record<string, ApiRouteHandlers>;
-}
-
-const registry: ServicePlugin[] = [];
-
-export function register(plugin: ServicePlugin) {
+export function register(plugin: FeatureManifest) {
   registry.push(plugin);
 }
 

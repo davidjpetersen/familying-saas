@@ -14,6 +14,19 @@ const eslintConfig = [
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      'import/no-restricted-paths': [
+        'error',
+        {
+          zones: [
+            // Prevent feature components from reaching into app/
+            { target: './packages/*/src/components', from: './app' },
+            // Prevent components from importing service internals directly
+            { target: './packages/*/src/components', from: './packages/*/src/service' },
+            // Prevent hooks from importing service internals other than public client
+            { target: './packages/*/src/hooks', from: './packages/*/src/service' }
+          ]
+        }
+      ]
     }
   }
 ];

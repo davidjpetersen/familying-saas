@@ -2,8 +2,9 @@ import { getServicePlugin } from '@/service-plugins';
 
 function resolveHandler(method: 'GET' | 'POST', id: string, path: string[]) {
   const plugin = getServicePlugin(id);
+  if (!plugin) return undefined;
   const key = path.join('/');
-  const handler = plugin?.routes?.[key];
+  const handler = plugin.routes?.[key];
   return handler ? handler[method] : undefined;
 }
 
