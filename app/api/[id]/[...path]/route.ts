@@ -4,7 +4,13 @@ function resolveHandler(method: 'GET' | 'POST', id: string, path: string[]) {
   const plugin = getServicePlugin(id);
   if (!plugin) return undefined;
   const key = path.join('/');
-  const handler = plugin.routes?.[key];
+  let handler = plugin.routes?.[key];
+  // Fallback: support simple one-level dynamic segment declared as "segment/[id]" or "segment/:id"
+  if (!handler && path.length >= 2) {
+    const wildcardKeyA = `${path[0]}/[id]`;
+    const wildcardKeyB = `${path[0]}/:id`;
+    handler = plugin.routes?.[wildcardKeyA] || plugin.routes?.[wildcardKeyB];
+  }
   return handler ? handler[method] : undefined;
 }
 

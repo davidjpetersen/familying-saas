@@ -25,7 +25,7 @@ export default function Player({
       if (context) params.set("context", context);
       if (ageBand) params.set("ageBand", ageBand);
       params.set("limit", "50");
-      fetch(`/api/convo/cards?${params.toString()}`)
+  fetch(`/api/conversation_starters/cards?${params.toString()}`)
         .then((r) => r.json())
         .then((d) => setCards(d));
     }
@@ -50,7 +50,7 @@ export default function Player({
   const card = cards[index];
 
   async function action(act: "favorite" | "hide" | "used") {
-    await fetch("/api/convo/interaction", {
+  await fetch("/api/conversation_starters/interaction", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ cardId: card.id, action: act }),

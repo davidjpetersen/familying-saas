@@ -8,7 +8,7 @@ export default function DeckCard({
 }) {
   return (
     <Link
-      href={`/convo/deck/${deck.id}`}
+  href={`/services/conversation_starters/deck/${deck.id}`}
       className="border rounded overflow-hidden block w-60"
       aria-label={`${deck.title} deck`}
     >

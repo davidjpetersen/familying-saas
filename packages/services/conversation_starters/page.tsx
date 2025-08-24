@@ -1,13 +1,48 @@
-import Link from "next/link";
+"use client";
+
+import { useEffect, useState } from "react";
+import QuickStart from "@/components/convo/QuickStart";
+import DeckCard from "@/components/convo/DeckCard";
+import Player from "@/components/convo/Player";
+import { ConvoDeck, AgeBand } from "@/types/convo";
+import { track } from "@/lib/analytics";
 
 export default function ConversationStartersPage() {
+  const [decks, setDecks] = useState<
+    (ConvoDeck & { card_count: number })[]
+  >([]);
+  const [playing, setPlaying] = useState(false);
+  const [context, setContext] = useState<string | undefined>();
+  const [ageBand, setAgeBand] = useState<AgeBand | undefined>();
+
+  useEffect(() => {
+    fetch("/api/conversation_starters/decks")
+      .then((r) => r.json())
+      .then(setDecks);
+    track("convo_view_home");
+  }, []);
+
   return (
-    <main className="max-w-7xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-semibold mb-3">Conversation Starters</h1>
-      <p className="text-muted-foreground mb-4">Prompts and questions to spark meaningful family conversations.</p>
-      <div className="space-x-2">
-        <Link href="/dashboard" className="text-sm text-primary underline">Back to dashboard</Link>
+    <div className="p-4 space-y-8">
+      <QuickStart
+        onStart={(c, a) => {
+          setContext(c);
+          setAgeBand(a);
+          setPlaying(true);
+        }}
+      />
+      <div className="flex gap-4 flex-wrap">
+        {decks.map((d) => (
+          <DeckCard key={d.id} deck={d} />
+        ))}
       </div>
-    </main>
+      {playing && (
+        <Player
+          context={context}
+          ageBand={ageBand}
+          onClose={() => setPlaying(false)}
+        />
+      )}
+    </div>
   );
 }
