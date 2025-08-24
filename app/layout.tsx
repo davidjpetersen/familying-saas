@@ -3,6 +3,8 @@ import Script from "next/script";
 import ClerkProviderWrapper from "@/components/ClerkProviderWrapper";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { validateEnv } from "@/lib/env";
+// Feature env validation can be enabled if needed by importing features and ensureFeatureEnv
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,6 +17,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Validate environment at boot (server)
+  if (typeof window === 'undefined') {
+    validateEnv();
+    // Optionally validate feature-specific envs at boot:
+    // const { features } = await import('@/lib/features');
+    // const { ensureFeatureEnv } = await import('@familying/feature-registry');
+    // ensureFeatureEnv(features);
+  }
   return (
     <html lang="en" suppressHydrationWarning>
         <head>

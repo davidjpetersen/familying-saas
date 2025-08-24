@@ -12,7 +12,8 @@ const plugin: FeatureManifest = {
     'book-summaries': { GET: getSummaries, POST: upsertSummary },
   },
   nav: [{ id: 'book_summaries', label: 'Book Summaries', href: '/services/book_summaries' }],
-  env: { keys: ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'] },
+  env: { keys: ['NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY'] },
+  migrations: [{ dir: 'packages/services/book_summaries/migrations' }],
 };
 
 export default plugin;

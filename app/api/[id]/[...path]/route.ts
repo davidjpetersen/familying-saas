@@ -1,4 +1,4 @@
-import { getServicePlugin } from '@/service-plugins';
+import { getServicePlugin } from '@/service-plugins.server';
 
 function resolveHandler(method: 'GET' | 'POST', id: string, path: string[]) {
   const plugin = getServicePlugin(id);

@@ -140,3 +140,10 @@ detailed explanations, cool features, and exercises to boost your skills. Give i
 <a href="https://jsm.dev/converso-nextjs" target="_blank">
   <img src="public/readme/jsmpro.png" alt="Project Banner">
 </a>
+
+## Development notes
+
+- Run the app: pnpm dev
+- Build: pnpm build, Start: pnpm start
+- DB Migrations: set DATABASE_URL in .env.local and run pnpm db:migrate. Per-feature migrations live under packages/\<feature\>/migrations and core schema under packages/core/migrations.
+- Env validation: required env vars are validated at server boot via lib/env.ts and per-feature env keys declared in each service.plugin.ts.

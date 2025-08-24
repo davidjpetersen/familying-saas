@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
-import { getServicePlugin } from '@/service-plugins';
+import { getServicePlugin } from '@/service-plugins.server';
 
+// Server component: resolves feature plugin and renders its page
 export default async function ServicePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const plugin = getServicePlugin(id);

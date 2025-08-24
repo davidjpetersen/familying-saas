@@ -11,6 +11,7 @@ type SummaryRow = {
 	updated_at?: string | null;
 };
 
+// Server Component: fetches directly from Supabase with RLS via Clerk
 export default async function GalleryPage() {
 	const supabase = createSupabaseClient();
 	let summaries: SummaryRow[] = [];

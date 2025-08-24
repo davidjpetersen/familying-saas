@@ -10,7 +10,14 @@ async function run() {
     process.exit(1);
   }
   const packagesDir = path.join(root, 'packages');
-  const pkgs = fs.readdirSync(packagesDir).filter((p) => fs.existsSync(path.join(packagesDir, p, 'migrations')));
+  const pkgs = fs.readdirSync(packagesDir)
+    .flatMap((p) => {
+      const pkgRoot = path.join(packagesDir, p);
+      // include nested packages like services/*
+      const nested = fs.existsSync(path.join(pkgRoot)) ? fs.readdirSync(pkgRoot).map((n) => path.join(p, n)) : [];
+      return [p, ...nested];
+    })
+    .filter((rel) => fs.existsSync(path.join(packagesDir, rel, 'migrations')));
 
   const client = new Client({ connectionString: databaseUrl });
   await client.connect();
@@ -24,6 +31,29 @@ async function run() {
       const already = await client.query('select 1 from _migrations where id=$1', [id]);
       if (already.rowCount) continue;
       const sql = fs.readFileSync(path.join(migDir, file), 'utf8');
+      await client.query('begin');
+      try {
+        await client.query(sql);
+        await client.query('insert into _migrations(id) values ($1)', [id]);
+        await client.query('commit');
+        console.log('Applied', id);
+      } catch (e) {
+        await client.query('rollback');
+        console.error('Failed', id, e);
+        process.exit(1);
+      }
+    }
+  }
+
+  // Optional: apply any legacy root migrations last under a core namespace
+  const legacyDir = path.join(root, 'supabase', 'migrations');
+  if (fs.existsSync(legacyDir)) {
+    const files = fs.readdirSync(legacyDir).filter((f) => f.endsWith('.sql')).sort();
+    for (const file of files) {
+      const id = `core:${file}`;
+      const already = await client.query('select 1 from _migrations where id=$1', [id]);
+      if (already.rowCount) continue;
+      const sql = fs.readFileSync(path.join(legacyDir, file), 'utf8');
       await client.query('begin');
       try {
         await client.query(sql);

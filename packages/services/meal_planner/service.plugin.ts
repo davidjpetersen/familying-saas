@@ -16,7 +16,8 @@ const plugin: FeatureManifest = {
     'shopping-list': { GET: getShoppingList }
   },
   nav: [{ id: 'meal_planner', label: 'Meal Planner', href: '/services/meal_planner' }],
-  env: { keys: ['NEXT_PUBLIC_SUPABASE_URL'] },
+  env: { keys: ['NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY'] },
+  migrations: [{ dir: 'packages/services/meal_planner/migrations' }],
 };
 
 export default plugin;

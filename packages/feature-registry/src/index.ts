@@ -26,3 +26,16 @@ export type FeatureManifest = {
 export type FeatureModule = {
   feature: FeatureManifest;
 };
+
+export function ensureFeatureEnv(features: FeatureManifest[], env: NodeJS.ProcessEnv = process.env) {
+  const missing: { feature: string; keys: string[] }[] = [];
+  for (const f of features) {
+    const keys = f.env?.keys ?? [];
+    const absent = keys.filter((k) => !env[k]);
+    if (absent.length) missing.push({ feature: f.id, keys: absent });
+  }
+  if (missing.length) {
+    const lines = missing.map((m) => `- ${m.feature}: ${m.keys.join(', ')}`).join('\n');
+    throw new Error(`Missing required env vars for features:\n${lines}`);
+  }
+}

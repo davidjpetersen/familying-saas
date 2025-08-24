@@ -23,7 +23,28 @@ const eslintConfig = [
             // Prevent components from importing service internals directly
             { target: './packages/*/src/components', from: './packages/*/src/service' },
             // Prevent hooks from importing service internals other than public client
-            { target: './packages/*/src/hooks', from: './packages/*/src/service' }
+            { target: './packages/*/src/hooks', from: './packages/*/src/service' },
+
+          ]
+        }
+      ]
+    }
+  },
+  // Disallow server-only imports from UI folders
+  {
+    files: [
+      './components/**/*.{ts,tsx}',
+      './packages/**/components/**/*.{ts,tsx}',
+      './app/**/components/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: '@clerk/nextjs/server', message: 'UI components must not import server-only APIs.' },
+            { name: '@clerk/nextjs/dist/esm/app-router/server', message: 'Do not import Clerk internals; use @clerk/nextjs/server in server code only.' },
+            { name: '@/lib/supabase', message: 'Use API routes or lib/supabase.client in the browser.' },
           ]
         }
       ]
