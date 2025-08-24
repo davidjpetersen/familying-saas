@@ -15,6 +15,7 @@ export type FeatureManifest = {
   description?: string;
   version?: string;
   page?: ComponentType<any>;
+  adminPage?: ComponentType<any>;
   routes?: Record<string, ApiRouteHandlers>;
   nav?: NavItem[];
   permissions?: Permission[];

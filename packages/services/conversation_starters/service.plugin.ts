@@ -1,4 +1,5 @@
 import ConversationStartersPage from './page';
+import ConversationStartersAdminPage from './admin/page';
 import { GET as getCards } from './api/cards';
 import { GET as getDecks } from './api/decks';
 import { GET as getDeckById } from './api/decks/[id]';
@@ -12,6 +13,7 @@ const plugin: FeatureManifest = {
   description: 'Prompts and questions to spark meaningful family conversations.',
   version: '0.1.0',
   page: ConversationStartersPage,
+  adminPage: ConversationStartersAdminPage,
   routes: {
     cards: { GET: getCards },
     decks: { GET: getDecks },

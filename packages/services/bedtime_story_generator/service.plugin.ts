@@ -1,4 +1,5 @@
 import BedtimeStoryGeneratorPage from './page';
+import BedtimeStoryGeneratorAdminPage from './admin/page';
 import { POST as generateStory } from './api/generate-story';
 import type { FeatureManifest } from '@familying/feature-registry';
 
@@ -8,6 +9,7 @@ const plugin: FeatureManifest = {
   description: 'Generate cozy, personalized bedtime stories for your family.',
   version: '0.1.0',
   page: BedtimeStoryGeneratorPage,
+  adminPage: BedtimeStoryGeneratorAdminPage,
   routes: {
     'generate-story': { POST: generateStory }
   },

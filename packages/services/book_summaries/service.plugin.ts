@@ -1,4 +1,5 @@
 import BookSummariesPage from './page';
+import BookSummariesAdminPage from './admin/page';
 import { GET as getSummaries, POST as upsertSummary } from './api/book-summaries';
 import type { FeatureManifest } from '@familying/feature-registry';
 
@@ -8,6 +9,7 @@ const plugin: FeatureManifest = {
   description: 'Browse and manage family-friendly book summaries.',
   version: '0.1.0',
   page: BookSummariesPage,
+  adminPage: BookSummariesAdminPage,
   routes: {
     'book-summaries': { GET: getSummaries, POST: upsertSummary },
   },

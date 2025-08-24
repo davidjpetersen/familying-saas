@@ -22,7 +22,7 @@
 			},
 			"type": "stdio"
 		},
-		"familying vercel": {
+		"familying-vercel": {
 			"url": "https://mcp.vercel.com/familying/familying",
 			"type": "http"
 		}
