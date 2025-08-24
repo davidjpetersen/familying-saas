@@ -17,7 +17,7 @@ export default function BookSummariesManager() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/book-summaries');
+  const res = await fetch('/api/book_summaries/book-summaries');
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error || 'failed to load');
       setItems(json.data || []);
@@ -54,7 +54,7 @@ export default function BookSummariesManager() {
     };
 
     try {
-      const res = await fetch('/api/book-summaries', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  const res = await fetch('/api/book_summaries/book-summaries', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error || 'create failed');
       setDocText('');

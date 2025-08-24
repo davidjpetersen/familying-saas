@@ -18,12 +18,21 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const { id, path = [] } = await params;
   const fn = resolveHandler('GET', id, path);
   if (!fn) return new Response('Not found', { status: 404 });
-  return fn(req);
+  const ctxParams: Record<string, string> = {};
+  if (path.length >= 2) {
+    // If matching wildcard like segment/[id], set { id: path[1] }
+    ctxParams.id = path[1];
+  }
+  return fn(req, { params: ctxParams });
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string; path: string[] }> }) {
   const { id, path = [] } = await params;
   const fn = resolveHandler('POST', id, path);
   if (!fn) return new Response('Not found', { status: 404 });
-  return fn(req);
+  const ctxParams: Record<string, string> = {};
+  if (path.length >= 2) {
+    ctxParams.id = path[1];
+  }
+  return fn(req, { params: ctxParams });
 }

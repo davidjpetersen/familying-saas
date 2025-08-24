@@ -15,7 +15,7 @@ export default function DeckPage() {
 
   useEffect(() => {
     const id = params.id as string;
-    fetch(`/api/convo/decks/${id}`)
+  fetch(`/api/conversation_starters/decks/${id}`)
       .then((r) => r.json())
       .then((d) => {
         setDeck(d.deck);

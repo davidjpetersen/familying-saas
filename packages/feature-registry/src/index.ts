@@ -1,8 +1,9 @@
 import type { ComponentType } from 'react';
 
+export type ApiContext = { params: Record<string, string> };
 export type ApiRouteHandlers = {
-  GET?: (req: Request) => Promise<Response>;
-  POST?: (req: Request) => Promise<Response>;
+  GET?: (req: Request, ctx?: ApiContext) => Promise<Response>;
+  POST?: (req: Request, ctx?: ApiContext) => Promise<Response>;
 };
 
 export type NavItem = { id: string; label: string; href: string; icon?: string };

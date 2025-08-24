@@ -1,6 +1,7 @@
 import ConversationStartersPage from './page';
 import { GET as getCards } from './api/cards';
 import { GET as getDecks } from './api/decks';
+import { GET as getDeckById } from './api/decks/[id]';
 import { POST as logInteraction } from './api/interaction';
 import { POST as recommendCards } from './api/recommend';
 import type { FeatureManifest } from '@familying/feature-registry';
@@ -14,6 +15,7 @@ const plugin: FeatureManifest = {
   routes: {
     cards: { GET: getCards },
     decks: { GET: getDecks },
+  'decks/[id]': { GET: getDeckById },
     interaction: { POST: logInteraction },
     recommend: { POST: recommendCards }
   },
