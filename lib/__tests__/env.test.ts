@@ -28,7 +28,7 @@ describe('Environment Validation', () => {
       };
 
       expect(() => validateEnv(invalidEnv)).toThrow(
-        expect.stringContaining('Invalid environment variables')
+        'Invalid environment variables. Fix and retry.'
       );
     });
 
@@ -38,7 +38,7 @@ describe('Environment Validation', () => {
       };
 
       expect(() => validateEnv(invalidEnv)).toThrow(
-        expect.stringContaining('Invalid environment variables')
+        'Invalid environment variables. Fix and retry.'
       );
     });
 
@@ -49,7 +49,7 @@ describe('Environment Validation', () => {
       };
 
       expect(() => validateEnv(invalidEnv)).toThrow(
-        expect.stringContaining('Invalid environment variables')
+        'Invalid environment variables. Fix and retry.'
       );
     });
 
@@ -86,7 +86,8 @@ describe('Environment Validation', () => {
         fail('Should have thrown an error');
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
-        expect((error as Error).message).toContain('Invalid environment variables');
+        expect((error as Error).message).toContain('Invalid environment variables. Fix and retry.');
+        // The error should mention the missing required fields
         expect((error as Error).message).toContain('NEXT_PUBLIC_SUPABASE_URL');
         expect((error as Error).message).toContain('NEXT_PUBLIC_SUPABASE_ANON_KEY');
       }
