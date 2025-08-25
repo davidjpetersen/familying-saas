@@ -3,6 +3,7 @@ import Script from "next/script";
 import ClerkProviderWrapper from "@/components/ClerkProviderWrapper";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { validateEnv } from "@/lib/env";
 // Feature env validation can be enabled if needed by importing features and ensureFeatureEnv
 import "./globals.css";
@@ -43,10 +44,12 @@ export default function RootLayout({
         <body className="antialiased font-sans">
           <ThemeProvider>
             <ClerkProviderWrapper>
-              <div className="container mx-auto">
-                <Navbar />
-                {children}
-              </div>
+              <ErrorBoundary>
+                <div className="container mx-auto">
+                  <Navbar />
+                  {children}
+                </div>
+              </ErrorBoundary>
             </ClerkProviderWrapper>
           </ThemeProvider>
         </body>

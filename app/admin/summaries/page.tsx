@@ -1,5 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { requireAdminPage } from '@/lib/auth/withAdmin';
 import { createSupabaseClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 
@@ -20,12 +19,9 @@ async function triggerRender(id: string) {
 }
 
 export default async function AdminSummariesPage() {
-  const { userId } = await auth();
-  if (!userId) redirect('/');
+  await requireAdminPage();
+  
   const supabase = createSupabaseClient();
-  const { data: adminRow } = await supabase.from('admins').select('*').eq('clerk_user_id', userId).limit(1).maybeSingle();
-  if (!adminRow) redirect('/dashboard');
-
   const { data, error } = await supabase
     .from('summaries')
     .select('id, is_published, render_version, title, tags, updated_at, books:book_id ( slug, title, authors, cover_uri )')

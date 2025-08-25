@@ -1,15 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { createSupabaseClient } from '@/lib/supabase';
+import { requireAdminPage } from '@/lib/auth/withAdmin';
 import AdminBookSummariesView from '@/components/AdminBookSummariesView';
 
 export default async function BookSummariesAdminPage() {
-  const { userId } = await auth();
-  if (!userId) redirect('/');
-
-  const supabase = createSupabaseClient();
-  const { data: rows, error } = await supabase.from('admins').select('*').eq('clerk_user_id', userId).limit(1).maybeSingle();
-  if (error || !rows) redirect('/dashboard');
+  await requireAdminPage();
 
   return (
     <div>

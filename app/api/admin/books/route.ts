@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseClient } from '@/lib/supabase';
-import { auth } from '@clerk/nextjs/server';
+import { withAdminApi } from '@/lib/auth/withAdmin';
 
-export async function GET(req: Request) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+export const GET = withAdminApi(async ({ userId, req, params }) => {
   const supabase = createSupabaseClient();
-  const { data: adminRow } = await supabase.from('admins').select('*').eq('clerk_user_id', userId).limit(1).maybeSingle();
-  if (!adminRow) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
-
   const url = new URL(req.url);
   const page = Math.max(1, Number(url.searchParams.get('page') || '1'));
   const pageSize = Math.min(50, Math.max(1, Number(url.searchParams.get('pageSize') || '25')));
@@ -22,18 +17,13 @@ export async function GET(req: Request) {
     .range(from, to);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ data, page, pageSize });
-}
+});
 
-export async function POST(req: Request) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+export const POST = withAdminApi(async ({ userId, req, params }) => {
   const supabase = createSupabaseClient();
-  const { data: adminRow } = await supabase.from('admins').select('*').eq('clerk_user_id', userId).limit(1).maybeSingle();
-  if (!adminRow) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
-
   const body = await req.json();
   const insert = {
-    owner_user_id: String(body.owner_user_id || adminRow.user_id || adminRow.clerk_user_id || userId),
+    owner_user_id: String(body.owner_user_id || userId),
     title: body.title || 'Untitled',
     subtitle: body.subtitle || null,
     authors: Array.isArray(body.authors) ? body.authors : [],
@@ -45,4 +35,4 @@ export async function POST(req: Request) {
   const { data, error } = await supabase.from('books').insert(insert).select('*').single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data, { status: 201 });
-}
+});

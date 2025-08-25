@@ -1,24 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getBookSummary, updateBookSummary, deleteBookSummary } from '@/lib/supabase/bookSummaries';
-import { auth } from '@clerk/nextjs/server';
-import { createSupabaseClient } from '@/lib/supabase';
+import { withAdminApi } from '@/lib/auth/withAdmin';
 import type { ApiContext } from '@familying/feature-registry';
 
-// Admin check helper
-async function checkAdmin(userId?: string | null) {
-  if (!userId) return false;
-  const supabase = createSupabaseClient();
-  const { data: adminRow } = await supabase.from('admins').select('*').eq('clerk_user_id', userId).limit(1).maybeSingle();
-  return !!adminRow;
-}
-
-export async function GET(req: Request, ctx?: ApiContext) {
-  const { userId } = await auth();
-  if (!userId || !(await checkAdmin(userId))) {
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
-  }
-
-  const id = ctx?.params?.id;
+export const GET = withAdminApi(async ({ userId, req, params }) => {
+  const id = params?.id;
   if (!id) {
     return NextResponse.json({ error: 'missing id' }, { status: 400 });
   }
@@ -29,15 +15,10 @@ export async function GET(req: Request, ctx?: ApiContext) {
   } catch (e: any) {
     return NextResponse.json({ error: String(e.message) }, { status: 500 });
   }
-}
+});
 
-export async function PUT(req: Request, ctx?: ApiContext) {
-  const { userId } = await auth();
-  if (!userId || !(await checkAdmin(userId))) {
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
-  }
-
-  const id = ctx?.params?.id;
+export const PUT = withAdminApi(async ({ userId, req, params }) => {
+  const id = params?.id;
   if (!id) {
     return NextResponse.json({ error: 'missing id' }, { status: 400 });
   }
@@ -49,15 +30,10 @@ export async function PUT(req: Request, ctx?: ApiContext) {
   } catch (e: any) {
     return NextResponse.json({ error: String(e.message) }, { status: 500 });
   }
-}
+});
 
-export async function DELETE(req: Request, ctx?: ApiContext) {
-  const { userId } = await auth();
-  if (!userId || !(await checkAdmin(userId))) {
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
-  }
-
-  const id = ctx?.params?.id;
+export const DELETE = withAdminApi(async ({ userId, req, params }) => {
+  const id = params?.id;
   if (!id) {
     return NextResponse.json({ error: 'missing id' }, { status: 400 });
   }
@@ -68,4 +44,4 @@ export async function DELETE(req: Request, ctx?: ApiContext) {
   } catch (e: any) {
     return NextResponse.json({ error: String(e.message) }, { status: 500 });
   }
-}
+});
